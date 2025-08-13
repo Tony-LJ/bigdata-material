@@ -75,3 +75,49 @@ select cons_no,group_concat(tg_id,‘；’) 台区编号
 from 表名
 group by cons_no
 ```
+
+- [小技巧]()
+```.text
+create table bi_data.dwd_cux_cux_lotnumtoebs_t_bak20250813 like bi_data.dwd_cux_cux_lotnumtoebs_t ; -- 创建备份数据表
+insert overwrite table bi_data.dwd_cux_cux_lotnumtoebs_t_bak20250813
+select * from bi_data.dwd_cux_cux_lotnumtoebs_t;  -- 数据写入备份表
+insert overwrite table bi_data.dwd_cux_cux_lotnumtoebs_t partition (pt_m)
+select *,to_date(trunc(stampdatetime,'MM')) as pt_m from bi_data.dwd_cux_cux_lotnumtoebs_t_bak20250813; -- 备份表重新回写新分区表
+```
+
+- [按照日期字段分区写入]()
+```.text
+insert overwrite table  bi_data.dwd_cux_cux_lotnumtoebs_t  
+PARTITION (pt_m)
+select
+coalesce(cast(lotnumtoebs_id as string)  ,'-1')            as lotnumtoebs_id      -- id
+,coalesce(stampdatetime             ,'-1')                  as stampdatetime       -- 过数时间
+,coalesce(item_code                   ,'-1')                  as item_code           -- 物料编码
+,coalesce(cust_code                 ,'-1')                  as cust_code           --  '客户编码'
+,coalesce(order_number              ,'-1')                  as order_number        --  '订单编号'
+,coalesce(wip_entity_num            ,'-1')                  as wip_entity_num      --  '工单号'
+,coalesce(frm_proc                  ,'-1')                  as frm_proc            -- 前工序代码
+,coalesce(item_version                ,'-1')                  as item_version        -- 大版本号
+,coalesce(pdversion                 ,'-1')                  as pdversion           -- 内部版本号
+,coalesce(layup_num                 ,'-1')                  as layup_num           -- 小版本号
+,coalesce(lotno                     ,'-1')                  as lotno               -- lot卡号
+,coalesce(suffix                    ,'-1')                  as suffix              -- 当前层数编码
+,coalesce(frm_proc_name             ,'-1')                  as frm_proc_name       -- 前工序名称
+,coalesce(cast(trans_qty as decimal(38,10)) ,0)             as trans_qty           -- 过数数量
+,coalesce(cast(milayerid as string)       ,'-1')            as milayerid           -- mi层id
+,coalesce(cuflag                    ,'-1')                  as cuflag              -- 是否cu
+,coalesce(to_proc                   ,'-1')                  as to_proc             -- 后工序代码
+,coalesce(frm_seq                   ,'-1')                  as frm_seq             -- 前工序序号
+,coalesce(to_seq                    ,'-1')                  as to_seq              -- 后工序序号
+,coalesce(transtype_name            ,'-1')                  as transtype_name      -- 过数类型
+,coalesce(nexsuffix                 ,'-1')                  as nexsuffix           -- 下一层数编码
+,coalesce(to_proc_name              ,'-1')                  as to_proc_name        -- 后工序名称
+,coalesce(cast(update_new_id as string)    ,'-1')           as update_new_id       -- 更新id号
+,coalesce(creation_date             ,'-1')                  as creation_date       -- 创建时间
+,coalesce(last_update_date          ,'-1')                  as last_update_date    -- 更新时间
+,coalesce(employee_name            ,'-1')                   as employee_name       -- 操作人
+,cast(now() as string)                                      as load_time           -- 数据写入时间
+,to_date(trunc(stampdatetime,'MM'))                         as pt_m
+--,substring(to_date(cast(stampdatetime as string)),1,4 )    as pt_y
+from    bi_ods.ods_cux_cux_mes_data_flow_all
+```
