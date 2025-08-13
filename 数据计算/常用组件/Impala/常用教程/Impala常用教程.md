@@ -98,15 +98,19 @@ select from_unixtime(unix_timestamp(date_add(date_trunc('day', now()), interval 
 select unix_timestamp(trunc(add_months(now(), -1), 'mm')) as first_day_of_last_month;                 -- 2025-07-01 00:00:00
 select unix_timestamp(last_day(add_months(now(), -1))) + ((60*60*24)*1)-1 as last_day_of_last_month;  -- 2025-07-31 23:59:59
 5.2 去年的起止时间
-select unix_timestamp(trunc(add_months(now(), -1), 'mm')) as first_day_of_last_month;                 -- 2025-07-01 00:00:00
-select unix_timestamp(last_day(add_months(now(), -1))) + ((60*60*24)*1)-1 as last_day_of_last_month;  -- 2025-07-31 23:59:59
+select  as first_day_of_last_year;                 -- 2025-07-01 00:00:00
+select  as last_day_of_last_year;  -- 2025-07-31 23:59:59
+6.获取指定天内的数据
+select * 
+from bi_ods.ods_mtl_transaction_lot_numbers
+where to_date(transaction_date) = '2025-08-12'
 ```
 - [截断函数]()
 ```.text
 TRUNC函数用于对值进行截断。
 用法有两种：TRUNC（NUMBER）表示截断数字，TRUNC（date）表示截断日期。
-select trunc(15.79,1) -------------- 15.7
-select trunc(156.79,-1) --------------- 150
+select trunc(15.79,1)  -- 15.7
+select trunc(156.79,-1)  -- 150
 ```
 
 - [行转列 group_concat(字段名,‘；’)]()
