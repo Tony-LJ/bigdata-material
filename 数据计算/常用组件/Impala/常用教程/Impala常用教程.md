@@ -37,6 +37,7 @@ select from_unixtime(unix_timestamp(),‘yyyy-MM’)
 select substr(cast(now() as string) , 1,7)
 - 取上月
 select substr(cast(to_date(date_add(date_trunc('month',to_date(date_sub(now(),1))),-1)) as string) , 1,7);
+select to_date(trunc(months_sub(date_sub(now(),1),1),'mm'));
 
 – 取当年
 select from_unixtime(unix_timestamp(),‘yyyy’)
@@ -67,6 +68,35 @@ select cast(cast(round(166/34148,2) as decimal(20,2)) as string)
 
 - 年月日期截取
 select substr(cast(to_date(stampdatetime) as string) , 1,7)  from bi_data.dwd_cux_cux_lotnumtoebs_t;
+
+----------------------------------------------------------------------------------------------------------
+1.时间戳转格式化为日期(String)
+select from_unixtime(unix_timestamp(), 'yyyy-MM-dd HH:mm:ss');
+select from_unixtime(1755302400, 'yyyy-MM-dd HH:mm:ss');
+select from_unixtime(1755067761, 'yyyy-MM-dd HH:mm:ss');
+select from_unixtime(unix_timestamp() + 60*60*24*30, 'yyyy-MM-dd')  -- 时间戳加30天
+select from_unixtime(unix_timestamp() - 60*60*24*30, 'yyyy-MM-dd')  -- 时间戳减30天
+select unix_timestamp(now() + interval 3 days)    -- 时间戳加3天
+2.获取当前时间戳
+unix_timestamp()
+3.时间戳取整
+select date_trunc('year',now())
+select date_trunc('month',now())
+select date_trunc('week',now())
+select date_trunc('day',now())
+select date_trunc('hour',now())
+select date_trunc('minute',now())
+4.日期格式化
+select from_unixtime(unix_timestamp('2021-11-12 11:12:11'),'yyyy-MM-dd HH:mm:ss')
+5.精确计算指定天的起止时间
+5.1 前一天的起止时间
+select date_add(date_trunc('day', now()), interval -1 days);
+select date_add(date_trunc('day', now()), interval -0 days) + interval -1 second 
+select from_unixtime(unix_timestamp(date_add(date_trunc('day', now()), interval -1 days)),'yyyy-MM-dd HH:mm:ss')  -- 2025-08-12 00:00:00
+select from_unixtime(unix_timestamp(date_add(date_trunc('day', now()), interval -0 days) + interval -1 second),'yyyy-MM-dd HH:mm:ss')   -- 2025-08-12 23:59:59
+5.1 上个月的起止时间
+select unix_timestamp(trunc(add_months(now(), -1), 'mm')) as first_day_of_last_month;                 -- 2025-07-01 00:00:00
+select unix_timestamp(last_day(add_months(now(), -1))) + ((60*60*24)*1)-1 as last_day_of_last_month;  -- 2025-07-31 23:59:59
 ```
 - [行转列 group_concat(字段名,‘；’)]()
 ```.text
