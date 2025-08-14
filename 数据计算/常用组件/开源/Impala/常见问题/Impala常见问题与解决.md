@@ -5,7 +5,7 @@
 
 ## Impala读写HDFS权限不够问题
 - [问题现象]() </br>
-![img](./imgs/93724598469.png)
+![img](imgs/93724598469.png)
 ```.text
 select  t.*  
 from    bi_tmp.tmp_dws_fin_goods_income_cost_ds_005 t.
