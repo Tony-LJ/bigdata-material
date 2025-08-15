@@ -16,9 +16,7 @@ password = 'PddHSuNXLHRl7etM2DZ5kg=='
 baseUrl = 'http://' + host + ':' + port
 print("baseUrl:{}".format(baseUrl))
 
-# ###################模拟登陆
-#. 登录获取accessToken
-session = requests.Session()
+# ##################################################### 模拟登陆
 headers = {
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
     'Connection': 'keep-alive',
@@ -35,6 +33,10 @@ headers = {
     'x-requested-with': 'XMLHttpRequest',
 }
 
+# 登录请求接口
+loginUrl = baseUrl + '/decision/login'
+print("loginUrl:{}".format(loginUrl))
+
 json_data = {
     'username': user,
     'password': password,
@@ -43,11 +45,8 @@ json_data = {
     'origin': '',
     'encrypted': True,
 }
-
-# 登录请求接口
-loginUrl = baseUrl + '/decision/login'
-print("loginUrl:{}".format(loginUrl))
-
+#. 登录获取accessToken
+session = requests.Session()
 response = session.post(loginUrl,
                         headers=headers,
                         json=json_data)
@@ -87,7 +86,7 @@ headers = {
     'Sec-Fetch-Site': 'same-origin',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
     'accept': 'application/json, text/plain, */*',
-    'authorization': 'Bearer '+accessToken,
+    'authorization': 'Bearer ' + accessToken,
     'content-type': 'application/json;charset=UTF-8',
     'sec-ch-ua': '"Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
     'sec-ch-ua-mobile': '?0',
@@ -97,7 +96,7 @@ headers = {
 }
 
 # 数据同步更新接口
-dataSyncTriggerUrl = baseUrl + '/decision/v5/conf/update/tables/'+table_name+'/trigger'
+dataSyncTriggerUrl = baseUrl + '/decision/v5/conf/update/tables/' + table_name + '/trigger'
 print("dataSyncTriggerUrl:{}".format(dataSyncTriggerUrl))
 response = session.post(dataSyncTriggerUrl,
                         cookies=cookies,
