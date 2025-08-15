@@ -48,7 +48,9 @@ json_data = {
 loginUrl = baseUrl + '/decision/login'
 print("loginUrl:{}".format(loginUrl))
 
-response = session.post(loginUrl, headers=headers, json=json_data)
+response = session.post(loginUrl,
+                        headers=headers,
+                        json=json_data)
 # json 解析 response.content，获取accessToken
 data = json.loads(response.content)
 if response.status_code == 200 :
@@ -97,9 +99,11 @@ headers = {
 # 数据同步更新接口
 dataSyncTriggerUrl = baseUrl + '/decision/v5/conf/update/tables/'+table_name+'/trigger'
 print("dataSyncTriggerUrl:{}".format(dataSyncTriggerUrl))
-response = session.post(dataSyncTriggerUrl, cookies=cookies, headers=headers, json=json_data)
-
-#解析response.content 提取 code
+response = session.post(dataSyncTriggerUrl,
+                        cookies=cookies,
+                        headers=headers,
+                        json=json_data)
+# 解析response.content 提取 code
 # try except 如果返回的不是200 则失败
 data = json.loads(response.content)
 if data['code'] == '200':
