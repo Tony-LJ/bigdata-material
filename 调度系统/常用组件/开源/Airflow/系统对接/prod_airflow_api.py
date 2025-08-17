@@ -122,8 +122,7 @@ def get_csrf_token():
 
     return csrf_token, session
 
-
-def retry_failed_taskInstance_InDag(dag_id):
+def retryFailedTaskIdInDag(dag_id):
     """
     DAG失败Task实例重启
     :param dag_id:
@@ -166,7 +165,7 @@ def retry_failed_taskInstance_InDag(dag_id):
             failed_tasks.append(task_id)
             pass
         pass
-    print("dag_id:{},task_id:{},failed_tasks:{}".format(dag_id, task_id, failed_tasks))
+        print("dag_id:{},task_id:{},failed_tasks:{}".format(dag_id, task_id, failed_tasks))
     execution_date = last_dag_run_id.split('__')[1]
     data = {
         'csrf_token': csrf_token,
@@ -181,6 +180,32 @@ def retry_failed_taskInstance_InDag(dag_id):
         # print(response.text)
     except:
         print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+
+def send_wechat_work_message(webhook_url, content, mentioned_list=None):
+    """
+    发送企业微信机器人消息
+    :param webhook_url: 机器人Webhook地址
+    :param content: 要发送的文本内容
+    :param mentioned_list: 需要@的成员列表(可选)
+    """
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "msgtype": "markdown",
+        "markdown": {
+            "content": content,
+            "mentioned_list": mentioned_list
+        }
+    }
+
+    try:
+        response = requests.post(webhook_url, headers=headers, data=json.dumps(payload))
+        response.raise_for_status()
+        print("消息发送成功")
+        return True
+    except Exception as e:
+        print(f"消息发送失败: {e}")
+        return False
+
 
 if __name__ == '__main__':
     csrf_token, session = get_csrf_token()
@@ -209,49 +234,7 @@ if __name__ == '__main__':
 
     # 遍历指定DAG
     for active_dag in active_dags:
-        dag_runs = get_list_dag_run(active_dag)['dag_runs']
-        # 获取该DAG最新的dag_run_id
-        dag_run_id = dag_runs[len(dag_runs) - 1]
-        # dag_run_id = dag_runs[-1]['dag_run_id']
-        # 查看每个DAG下的Task实例
-        task_instances = get_last_dagrun_task_instances(active_dag, run_id=dag_run_id['dag_run_id'])
-
-        # 遍历DAG中的task_instance实例
-        for task_instance in task_instances['task_instances']:
-            # print(task_instance)
-            # 判断task_instance是否运行成功，如果没有运行成功是否进行过重试，如果重试失败直接不管；如果运行不成功，且没有重试，在此处进行重试拉起1一次
-            if task_instance['state'] != 'success':
-               # print(task_instance)
-               execution_date = dag_runs[-1]['dag_run_id'].split('__')[1]
-               print("execution_date:" + execution_date)
-               # 查看task_instance的具体状态
-               if task_instance['state'] == 'failed':
-                   print("TaskID:{},RunID:{},处于failed状态，进行手动拉起".format(task_instance['task_id'], task_instance['execution_date']))
-                   dag_id = task_instance['dag_id']
-                   dag_run_id = task_instance['dag_run_id']
-                   task_id = task_instance['task_id']
-                   data = {
-                       'dag_id': dag_id,
-                       'dag_run_id': dag_run_id,
-                       'task_id': task_id,
-                       'confirmed': 'true',
-                       'execution_date': execution_date
-                   }
-                   credentials = {
-                       'username': USERNAME,
-                       'password': PASSWORD,
-                       'csrf_token': csrf_token  # 添加 CSRF token
-                   }
-                   # 第二步：登录请求
-                   response = session.post(f'http://10.53.0.75:8080/login', data=credentials)
-                   print(response)
-                   response = session.post(f'http://10.53.0.75:8080/clear', data=data, verify=False)
-                   print(response)
-               elif task_instance['state'] == 'up_for_retry':
-                   print("任务ID:{},处于up_for_retry状态，等待15分钟之后查看是否处于failed，如果仍然处于进行处于up_for_retry状态，则手动设置为failed状态，然后再手动拉起".format(task_instance['state']))
-               else:
-                   print("其余状态不需要处理！")
-        # print(task_instances)
+        retryFailedTaskIdInDag(active_dag)
 
 
 
