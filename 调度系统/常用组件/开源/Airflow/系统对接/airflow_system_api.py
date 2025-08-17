@@ -2,6 +2,20 @@
 
 """
 descr: airflow api系统交互脚本
+https://airflow.apache.org/docs/apache-airflow/2.10.4/stable-rest-api-ref.html#operation/set_task_instance_note
+---------------------------------------------------------------------------------
+Airflow API采用统一的URL结构:
+http://<airflow-webserver>:<port>/api/v1/<resource>/[<resource-id>]/[<sub-resource>]
+主要资源类型：
+dags：DAG相关操作
+dagRuns：DAG运行实例
+tasks：任务相关操作
+taskInstances：任务实例
+connections：数据库连接
+variables：Airflow变量
+users：用户管理
+roles：角色权限
+---------------------------------------------------------------------------------
 author: tony
 date: 2025-08-12
 """
@@ -9,6 +23,7 @@ import os
 import time
 import requests
 from requests.auth import HTTPBasicAuth
+from datetime import datetime, timedelta
 
 # ################## 基础信息配置
 AIRFLOW_URL = "http://10.53.0.75:8080/api/v1"
@@ -103,6 +118,7 @@ def get_task_instances(dag_id, run_id=None, limit=100):
     """
     if run_id:
         url = f"{AIRFLOW_URL}/dags/{dag_id}/dagRuns/{run_id}/taskInstances"
+        print(url)
     else:
         url = f"{AIRFLOW_URL}/dags/{dag_id}/taskInstances"
 
@@ -122,7 +138,17 @@ def get_task_instances(dag_id, run_id=None, limit=100):
 
 def clear_task_instances(dag_id, start_date, end_date, task_ids=None):
     """
-    清除指定日期范围内的任务实例状态
+        清除指定日期范围内的任务实例状态
+        no_status  ：任务未被调度前的初始状态。
+        queued  ：任务被调度后，等待执行的状态。
+        running  ：任务正在执行中。
+        success  ：任务成功完成。
+        failed  ：任务执行失败。
+        up_for_retry  ：任务失败但未达到重试次数上限。
+        up_for_reschedule  ：任务失败后等待重新调度。
+        upstream_failed  ：上游任务失败导致下游任务失败。
+        skipped  ：任务被跳过执行。
+        scheduled  ：任务等待调度执行。
     :param dag_id:
     :param start_date:
     :param end_date:
@@ -130,10 +156,13 @@ def clear_task_instances(dag_id, start_date, end_date, task_ids=None):
     :return:
     """
     url = f"{AIRFLOW_URL}/dags/{dag_id}/clearTaskInstances"
+    print(url)
 
     data = {
-        "start_date": start_date.isoformat(),
-        "end_date": end_date.isoformat(),
+        # "start_date": start_date.isoformat(),
+        # "end_date": end_date.isoformat(),
+        "start_date": '2025-08-14 00:00:00',
+        "end_date": '2025-08-15 59:59:59',
         "task_ids": task_ids or [],
         "only_failed": False,
         "only_running": False
@@ -347,10 +376,49 @@ if __name__ == '__main__':
         print(f"Scheduler status: {health['scheduler']['status']}")
         # print(f"Last scheduler heartbeat: {health['scheduler']['latest_heartbeat']}")
 
+    print(" >>>>>> 获取DAG列表" )
+    dags = get_dags(limit=20)
+    if dags:
+        print(f"Found {dags['total_entries']} DAGs")
+        for dag in dags['dags']:
+            print(f"- {dag['dag_id']}: {'Paused' if dag['is_paused'] else 'Active'}")
 
+    print(" >>>>>> 触发DAG运行" )
+    # 使用示例
+    run_config = {
+        "param1": "value1",
+        "param2": "value2"
+    }
+    result = trigger_dag_run(
+        dag_id="kw_guoshu_incr_day_dag",
+        conf=run_config
+    )
+    if result:
+        print(f"Triggered DAG run: {result['dag_run_id']}")
+        # print(f"Run URL: {result['url']}")
 
+    print(" >>>>>> 暂停/恢复DAG" )
+    # 暂停DAG
+    update_dag_state("kw_guoshu_incr_day_dag", is_paused=True)
+    # 恢复DAG
+    update_dag_state("kw_guoshu_incr_day_dag", is_paused=False)
 
+    print(" >>>>>> 获取任务实例状态" )
+    # 使用示例
+    task_instances = get_task_instances("kw_guoshu_incr_day_dag", run_id="manual__1755229120")
+    if task_instances:
+        for ti in task_instances['task_instances']:
+            print(f"Task: {ti['task_id']}, State: {ti['state']}")
 
+    print(" >>>>>> 清除任务实例状态" )
+    start = datetime.now() - timedelta(days=1)
+    end = datetime.now()
+    clear_task_instances(
+        dag_id="kw_guoshu_incr_day_dag",
+        start_date=start,
+        end_date=end,
+        task_ids=["bi_data_dwd_cux_cux_lotnumtoebs_t"]
+    )
 
 
 
