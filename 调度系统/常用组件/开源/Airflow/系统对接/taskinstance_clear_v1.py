@@ -79,3 +79,11 @@ data = {
 
 response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
 
+
+
+
+
+
+
+
+
