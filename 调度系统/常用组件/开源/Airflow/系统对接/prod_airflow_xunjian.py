@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ################################
-# */5 * * * * /usr/bin/python3 /opt/project/prod_airflow_xunjian.py >> /opt/project/prod_airflow_xunjian.log 2>&1
+# */10 * * * * /usr/bin/python3 /opt/project/prod_airflow_xunjian.py >> /opt/project/prod_airflow_xunjian.log 2>&1
 #
 # ###############################
 
