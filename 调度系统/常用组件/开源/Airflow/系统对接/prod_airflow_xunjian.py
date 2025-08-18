@@ -381,18 +381,7 @@ def get_taskid_dependencies(dag_id, task_id):
 
 if __name__ == '__main__':
     get_taskid_dependencies("kw_dws_ads_dag_new", "bi_ads_ads_oa_equip_accept_report_ds.sql")
-    tableName = 'ads_device_lotnumtoebs_detail_ds'
-    sql = "select script_name,table_name,table_id,update_type from bi_data.dwd_finebi_info_ds where table_name = " + "'" + tableName + "'"
-    table_id = query_impala_bysql(sql)[0][2]
-    print(table_id)
 
-    # dag_id = "utc_dag_id"
-    # task_id = "utc_task_id"
-    # execution_date = "2025-08-17"
-    # content = "巡检测试消息"
-    # utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-    # msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + content + "</font>\n"
-    # send_wechat_work_message(utcWebhookUrl,msg)
     csrf_token, session = get_csrf_token()
     print("airflow_csrf_token:{}, airflow_session:{}".format(csrf_token, session))
     print(" >>>>>> Airflow健康度检查" )
