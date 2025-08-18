@@ -198,52 +198,33 @@ def retryFailedTaskIdInDag(dag_id):
         # msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务,巡检日期:" + current_time + " </font>\n "
         # send_wechat_work_message(utcWebhookUrl,msg)
     else:
-        if dag_id == 'kw_dws_ads_dag_new':
-            # 存在异常任务时
-            for task_id in failed_tasks:
-                data = {
-                    'csrf_token': csrf_token,
-                    'dag_id': dag_id,
-                    'dag_run_id': last_dag_run_id,
-                    'task_id': task_id,
-                    'confirmed': 'true',
-                    'execution_date': execution_date
-                }
-                try:
-                    response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
-                    # print(response.text)
-                    # 同步更新FineBI,bi_ads_ads_kwhrsys_avw_attend_day_hadoop_pme_ds.sql
-                    table_name = task_id[7:][:-4]
-                    print("推送表:{} 数据到FineBI".format(table_name))
-                    # bi_data.dwd_finebi_info_ds属于T+1更新
-                    sql = "select script_name,table_name,table_id,update_type from bi_data.dwd_finebi_info_ds where table_name = " + "'" + table_name + "'"
-                    table_id = query_impala_bysql(sql)[0][2]
-                    update_data_to_finebi(table_id,2)
-                except:
-                    utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-                    msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
-                    send_wechat_work_message(utcWebhookUrl,msg)
-                    print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
-        else:
-            # 查询该Task上下游Task血缘关系,已经血缘关系，更新该表与该表之后血缘关系的表
-            # 存在异常任务时
-            for task_id in failed_tasks:
-                data = {
-                    'csrf_token': csrf_token,
-                    'dag_id': dag_id,
-                    'dag_run_id': last_dag_run_id,
-                    'task_id': task_id,
-                    'confirmed': 'true',
-                    'execution_date': execution_date
-                }
-                try:
-                    response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
-                    # print(response.text)
-                except:
-                    utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-                    msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
-                    send_wechat_work_message(utcWebhookUrl,msg)
-                    print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+        # 存在异常任务时
+        for task_id in failed_tasks:
+            data = {
+                'csrf_token': csrf_token,
+                'dag_id': dag_id,
+                'dag_run_id': last_dag_run_id,
+                'task_id': task_id,
+                'confirmed': 'true',
+                "downstream": 'true',
+                "recursive": 'true',
+                'execution_date': execution_date
+            }
+            try:
+                response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
+                # print(response.text)
+                # 同步更新FineBI,bi_ads_ads_kwhrsys_avw_attend_day_hadoop_pme_ds.sql
+                # table_name = task_id[7:][:-4]
+                # print("推送表:{} 数据到FineBI".format(table_name))
+                # # bi_data.dwd_finebi_info_ds属于T+1更新
+                # sql = "select script_name,table_name,table_id,update_type from bi_data.dwd_finebi_info_ds where table_name = " + "'" + table_name + "'"
+                # table_id = query_impala_bysql(sql)[0][2]
+                # update_data_to_finebi(table_id,2)
+            except:
+                utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+                msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
+                send_wechat_work_message(utcWebhookUrl,msg)
+                print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
 
 def send_wechat_work_message(webhook_url, content, mentioned_list=None):
     """

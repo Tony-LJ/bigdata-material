@@ -9,7 +9,8 @@ USERNAME = "airflow"
 PASSWORD = "airflow"
 # ##################
 
-dag_id = 'kw_guoshu_incr_day_dag'
+# dag_id = 'kw_guoshu_incr_day_dag'
+dag_id = 'kw_obj_20up_dag'
 
 # 创建会话
 session = requests.Session()
@@ -41,7 +42,7 @@ response = session.get(api_url)
 
 # 获取最新dagRuns
 dag_runs = response.json()['dag_runs']
-last_dag_run_id = 'scheduled__2025-08-16T05:00:00+00:00'
+last_dag_run_id = 'scheduled__2025-08-16T10:01:00+00:00'
 
 # 检查登录是否成功
 if response.ok:
@@ -71,16 +72,20 @@ data = {
     'csrf_token': csrf_token,
     'dag_id': dag_id,
     'dag_run_id': last_dag_run_id,
-    'task_id': task_id,
+    'task_id': 'bi_data_dws_oe_order_ds',
     'confirmed': 'true',
+    "downstream": 'true',
+    "recursive": 'true',
     'execution_date': execution_date
 }
 
+print(data)
 
 response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
 
 
-
+if __name__ == '__main__':
+    print("")
 
 
 
