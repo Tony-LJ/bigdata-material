@@ -222,7 +222,6 @@ def retryFailedTaskIdInDag(dag_id):
                     send_wechat_work_message(utcWebhookUrl,msg)
                     print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
 
-
 def send_wechat_work_message(webhook_url, content, mentioned_list=None):
     """
     发送企业微信机器人消息
