@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+# ################################
+# */5 * * * * /usr/bin/python3 /opt/project/prod_airflow_xunjian.py >> /opt/project/prod_airflow_xunjian.log 2>&1
+#
+# ###############################
 
+import json
 import os
 import time
 import requests
 from requests.auth import HTTPBasicAuth
-from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
 # ################## 基础信息配置
@@ -152,7 +156,7 @@ def retryFailedTaskIdInDag(dag_id):
     last_dag_run_id = dag_runs[-1]['dag_run_id']
     # 获取任务状态
     api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns/{last_dag_run_id}/taskInstances'
-    print(api_url)
+    # print(api_url)
     taskInstances = session.get(api_url).json()['task_instances']
     failed_tasks =[]
     task_id = ''
@@ -165,7 +169,7 @@ def retryFailedTaskIdInDag(dag_id):
             failed_tasks.append(task_id)
             pass
         pass
-        print("dag_id:{},task_id:{},failed_tasks:{}".format(dag_id, task_id, failed_tasks))
+        print("dag_id:{},last_dag_run_id:{},task_id:{},failed_tasks:{}".format(dag_id, last_dag_run_id, task_id, failed_tasks))
     execution_date = last_dag_run_id.split('__')[1]
     data = {
         'csrf_token': csrf_token,
@@ -179,6 +183,9 @@ def retryFailedTaskIdInDag(dag_id):
         response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
         # print(response.text)
     except:
+        utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+        msg = "**DAG名称**: <font color='blue'>"+ dag_id + "</font>\n " + "**Task名称**: <font color='blue'>"+ task_id + "</font>\n" + "**执行日期**: <font color='blue'>"+ execution_date + "</font>\n" + "**异常原因**: <font color='blue'>"+ response.text + "</font>\n"
+        send_wechat_work_message(utcWebhookUrl,msg)
         print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
 
 def send_wechat_work_message(webhook_url, content, mentioned_list=None):
@@ -208,6 +215,13 @@ def send_wechat_work_message(webhook_url, content, mentioned_list=None):
 
 
 if __name__ == '__main__':
+    # dag_id = "utc_dag_id"
+    # task_id = "utc_task_id"
+    # execution_date = "2025-08-17"
+    # content = "巡检测试消息"
+    # utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+    # msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + content + "</font>\n"
+    # send_wechat_work_message(utcWebhookUrl,msg)
     csrf_token, session = get_csrf_token()
     print("airflow_csrf_token:{}, airflow_session:{}".format(csrf_token, session))
     print(" >>>>>> Airflow健康度检查" )
@@ -221,7 +235,7 @@ if __name__ == '__main__':
     dags = get_dags(limit=50)
     active_dags = []
     # 指定需要额外处理的DAG
-    prod_dags = ['kw_ods_dag_new','kw_dwd_dim_dag_new','kw_dws_ads_dag_new','kw_guoshu_incr_day_dag']
+    prod_dags = ['kw_ods_dag_new','kw_dwd_dim_dag_new','kw_dws_ads_dag_new']
 
     if dags:
         print(f"Found {dags['total_entries']} DAGs")
