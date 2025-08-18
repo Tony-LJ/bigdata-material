@@ -10,12 +10,31 @@ import time
 import requests
 from requests.auth import HTTPBasicAuth
 from bs4 import BeautifulSoup
+from impala.dbapi import connect
 
 # ################## 基础信息配置
 AIRFLOW_URL = "http://10.53.0.75:8080/api/v1"
 USERNAME = "airflow"
 PASSWORD = "airflow"
 # ##################
+
+def query_impala_bysql(sql):
+    """
+    查询impala
+    :param sql:
+    :return:
+    """
+    conn = connect(host='10.53.0.71',
+                   port=21050,
+                   user="root",
+                   password="",
+                   database="impala")
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    meta_lst = cursor.fetchall()
+    print(meta_lst)
+    cursor.close()
+    return meta_lst
 
 def get_airflow_health():
     """
@@ -195,7 +214,11 @@ def retryFailedTaskIdInDag(dag_id):
                     # print(response.text)
                     # 同步更新FineBI,bi_ads_ads_kwhrsys_avw_attend_day_hadoop_pme_ds.sql
                     table_name = task_id[7:][:-4]
-                    update_data_to_finebi(table_name,2)
+                    print("推送表:{} 数据到FineBI".format(table_name))
+                    # bi_data.dwd_finebi_info_ds属于T+1更新
+                    sql = "select script_name,table_name,table_id,update_type from bi_data.dwd_finebi_info_ds where table_name = " + "'" + table_name + "'"
+                    table_id = query_impala_bysql(sql)[0][2]
+                    update_data_to_finebi(table_id,2)
                 except:
                     utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
                     msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
@@ -351,15 +374,18 @@ def get_taskid_dependencies(dag_id, task_id):
     dag_runs = response.json()['dag_runs']
     last_dag_run_id = dag_runs[-1]['dag_run_id']
     # api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns/{last_dag_run_id}/taskInstances/{task_id}/dependencies'
-    api_url = f'{AIRFLOW_URL}/api/v1/dags/kw_dws_ads_dag_new/dagRuns/{last_dag_run_id}/taskInstances/bi_ads_ads_import_customs_dtl_ds.sql/dependencies'
-    print(api_url)
+    api_url = f'{AIRFLOW_URL}/api/v1/dags/kw_guoshu_incr_day_dag/dagRuns/scheduled__2025-08-18T05:00:00+00:00/taskInstances/bi_data_dwd_cux_cux_lotnumtoebs_t/dependencies'
     response = session.get(api_url)
     print(response.text)
 
 
-
 if __name__ == '__main__':
     get_taskid_dependencies("kw_dws_ads_dag_new", "bi_ads_ads_oa_equip_accept_report_ds.sql")
+    tableName = 'ads_device_lotnumtoebs_detail_ds'
+    sql = "select script_name,table_name,table_id,update_type from bi_data.dwd_finebi_info_ds where table_name = " + "'" + tableName + "'"
+    table_id = query_impala_bysql(sql)[0][2]
+    print(table_id)
+
     # dag_id = "utc_dag_id"
     # task_id = "utc_task_id"
     # execution_date = "2025-08-17"
