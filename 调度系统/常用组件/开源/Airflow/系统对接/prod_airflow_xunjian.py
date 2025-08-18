@@ -212,7 +212,7 @@ def retryFailedTaskIdInDag(dag_id):
             }
             try:
                 response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
-                # print(response.text)
+                print(response.text)
                 # 同步更新FineBI,bi_ads_ads_kwhrsys_avw_attend_day_hadoop_pme_ds.sql
                 # table_name = task_id[7:][:-4]
                 # print("推送表:{} 数据到FineBI".format(table_name))
