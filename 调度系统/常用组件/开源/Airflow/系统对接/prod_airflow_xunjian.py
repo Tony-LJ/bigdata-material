@@ -159,7 +159,6 @@ def retryFailedTaskIdInDag(dag_id):
     # print(api_url)
     taskInstances = session.get(api_url).json()['task_instances']
     failed_tasks =[]
-    task_id = ''
     for taskInstance in taskInstances:
         task_id = taskInstance['task_id']
         state = taskInstance['state']
@@ -169,31 +168,35 @@ def retryFailedTaskIdInDag(dag_id):
             failed_tasks.append(task_id)
             pass
         pass
-        print("dag_id:{},last_dag_run_id:{},task_id:{},failed_tasks:{}".format(dag_id, last_dag_run_id, task_id, failed_tasks))
+        # print("dag_id:{},last_dag_run_id:{},task_id:{},failed_tasks:{}".format(dag_id, last_dag_run_id, task_id, failed_tasks))
     execution_date = last_dag_run_id.split('__')[1]
     # 无异常任务时
     if len(failed_tasks) == 0:
-        utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-        msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务 </font>\n "
-        send_wechat_work_message(utcWebhookUrl,msg)
-    # 存在异常任务时
-    for task_id in failed_tasks:
-        data = {
-            'csrf_token': csrf_token,
-            'dag_id': dag_id,
-            'dag_run_id': last_dag_run_id,
-            'task_id': task_id,
-            'confirmed': 'true',
-            'execution_date': execution_date
-        }
-        try:
-            response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
-            # print(response.text)
-        except:
-            utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-            msg = "**DAG名称**: <font color='blue'>"+ dag_id + "</font>\n " + "**Task名称**: <font color='blue'>"+ task_id + "</font>\n" + "**执行日期**: <font color='blue'>"+ execution_date + "</font>\n" + "**异常原因**: <font color='blue'>"+ response.text + "</font>\n"
-            send_wechat_work_message(utcWebhookUrl,msg)
-            print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+        struct_time = time.localtime()
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S", struct_time)
+        print(">>>>>无异常任务,巡检时间:{}".format(current_time))
+        # utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+        # msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务,巡检日期:" + current_time + " </font>\n "
+        # send_wechat_work_message(utcWebhookUrl,msg)
+    else:
+        # 存在异常任务时
+        for task_id in failed_tasks:
+            data = {
+                'csrf_token': csrf_token,
+                'dag_id': dag_id,
+                'dag_run_id': last_dag_run_id,
+                'task_id': task_id,
+                'confirmed': 'true',
+                'execution_date': execution_date
+            }
+            try:
+                response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
+                # print(response.text)
+            except:
+                utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+                msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
+                send_wechat_work_message(utcWebhookUrl,msg)
+                print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
 
 def send_wechat_work_message(webhook_url, content, mentioned_list=None):
     """
