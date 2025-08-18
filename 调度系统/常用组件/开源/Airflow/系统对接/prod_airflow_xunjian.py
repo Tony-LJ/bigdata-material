@@ -179,24 +179,49 @@ def retryFailedTaskIdInDag(dag_id):
         # msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务,巡检日期:" + current_time + " </font>\n "
         # send_wechat_work_message(utcWebhookUrl,msg)
     else:
-        # 存在异常任务时
-        for task_id in failed_tasks:
-            data = {
-                'csrf_token': csrf_token,
-                'dag_id': dag_id,
-                'dag_run_id': last_dag_run_id,
-                'task_id': task_id,
-                'confirmed': 'true',
-                'execution_date': execution_date
-            }
-            try:
-                response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
-                # print(response.text)
-            except:
-                utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-                msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
-                send_wechat_work_message(utcWebhookUrl,msg)
-                print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+        if dag_id == 'kw_dws_ads_dag_new':
+            # 存在异常任务时
+            for task_id in failed_tasks:
+                data = {
+                    'csrf_token': csrf_token,
+                    'dag_id': dag_id,
+                    'dag_run_id': last_dag_run_id,
+                    'task_id': task_id,
+                    'confirmed': 'true',
+                    'execution_date': execution_date
+                }
+                try:
+                    response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
+                    # print(response.text)
+                    # 同步更新FineBI,bi_ads_ads_kwhrsys_avw_attend_day_hadoop_pme_ds.sql
+                    table_name = task_id[7:][:-4]
+                    update_data_to_finebi(table_name,2)
+                except:
+                    utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+                    msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
+                    send_wechat_work_message(utcWebhookUrl,msg)
+                    print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+        else:
+            # 查询该Task上下游Task血缘关系,已经血缘关系，更新该表与该表之后血缘关系的表
+            # 存在异常任务时
+            for task_id in failed_tasks:
+                data = {
+                    'csrf_token': csrf_token,
+                    'dag_id': dag_id,
+                    'dag_run_id': last_dag_run_id,
+                    'task_id': task_id,
+                    'confirmed': 'true',
+                    'execution_date': execution_date
+                }
+                try:
+                    response = session.post(f'{AIRFLOW_URL}/clear',data=data, verify=False)
+                    # print(response.text)
+                except:
+                    utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+                    msg = "**DAG名称**: <font color='blue'>" + dag_id + "</font>\n " + "**Task名称**: <font color='blue'>" + task_id + "</font>\n" + "**执行日期**: <font color='blue'>" + execution_date + "</font>\n" + "**异常原因**: <font color='blue'>" + response.text + "</font>\n"
+                    send_wechat_work_message(utcWebhookUrl,msg)
+                    print("发现异常任务，但是巡检失败，请检查!", response.status_code, response.text)
+
 
 def send_wechat_work_message(webhook_url, content, mentioned_list=None):
     """
@@ -223,6 +248,82 @@ def send_wechat_work_message(webhook_url, content, mentioned_list=None):
         print(f"消息发送失败: {e}")
         return False
 
+def update_data_to_finebi(table_name, update_type):
+    """
+    更新FineBI的数据
+    :param table_name:
+    :param update_type:
+    :return:
+    """
+    fineBiUrl = 'http://10.53.1.173:8080'
+    session = requests.Session()
+    headers = {
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'Connection': 'keep-alive',
+        'Origin': fineBiUrl,
+        'Referer': fineBiUrl + '/decision/login',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+        'accept': 'application/json, text/javascript, */*; q=0.01',
+        'sec-ch-ua': '"Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'x-requested-with': 'XMLHttpRequest',
+    }
+    json_data = {
+        'username': '000000',
+        'password': 'PddHSuNXLHRl7etM2DZ5kg==',
+        'validity': -1,
+        'sliderToken': '',
+        'origin': '',
+        'encrypted': True,
+    }
+    response = session.post(fineBiUrl + '/decision/login', headers=headers, json=json_data)
+    data = json.loads(response.content)
+    if response.status_code == 200 :
+        print('get accessToken success')
+    else:
+        print('failed')
+        raise Exception('get accessToken failed')
+    accessToken = data['data']['accessToken']
+    cookies = {
+        'tenantId': 'default',
+        'fine_remember_login': '-1',
+        'dev': 'UqNTp725yS2lMBaBDPL3WY7tLd',
+        'fine_login_users': 'f-9200302300158213064,4340becf-ca56-4f60-b9f9-653c8a47a02a',
+        'fine_auth_token': accessToken,
+    }
+    json_data = {
+        'updateType': update_type,
+        'tableName': table_name,
+    }
+    headers = {
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'Connection': 'keep-alive',
+        'Origin': fineBiUrl,
+        'Referer': fineBiUrl + '/decision',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+        'accept': 'application/json, text/plain, */*',
+        'authorization': 'Bearer '+accessToken,
+        'content-type': 'application/json;charset=UTF-8',
+        'sec-ch-ua': '"Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sessionid': '503e40ccf5d5ec9c',
+        'x-requested-with': 'XMLHttpRequest',
+    }
+    response = session.post(fineBiUrl + '/decision/v5/conf/update/tables/' + table_name + '/trigger', cookies=cookies, headers=headers, json=json_data)
+    data = json.loads(response.content)
+    if data['code'] == '200':
+        print('success')
+    else:
+        print('failed')
+        raise Exception('failed')
 
 if __name__ == '__main__':
     # dag_id = "utc_dag_id"
@@ -259,10 +360,6 @@ if __name__ == '__main__':
     # 遍历指定DAG
     for active_dag in active_dags:
         retryFailedTaskIdInDag(active_dag)
-
-
-
-
 
 
 
