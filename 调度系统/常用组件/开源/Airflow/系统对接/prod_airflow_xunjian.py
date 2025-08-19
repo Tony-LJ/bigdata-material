@@ -10,7 +10,7 @@ import time
 import requests
 from requests.auth import HTTPBasicAuth
 from bs4 import BeautifulSoup
-from impala.dbapi import connect
+# from impala.dbapi import connect
 
 # ################## 基础信息配置
 AIRFLOW_URL = "http://10.53.0.75:8080/api/v1"
@@ -18,23 +18,23 @@ USERNAME = "airflow"
 PASSWORD = "airflow"
 # ##################
 
-def query_impala_bysql(sql):
-    """
-    查询impala
-    :param sql:
-    :return:
-    """
-    conn = connect(host='10.53.0.71',
-                   port=21050,
-                   user="root",
-                   password="",
-                   database="impala")
-    cursor = conn.cursor()
-    cursor.execute(sql)
-    meta_lst = cursor.fetchall()
-    print(meta_lst)
-    cursor.close()
-    return meta_lst
+# def query_impala_bysql(sql):
+#     """
+#     查询impala
+#     :param sql:
+#     :return:
+#     """
+#     conn = connect(host='10.53.0.71',
+#                    port=21050,
+#                    user="root",
+#                    password="",
+#                    database="impala")
+#     cursor = conn.cursor()
+#     cursor.execute(sql)
+#     meta_lst = cursor.fetchall()
+#     print(meta_lst)
+#     cursor.close()
+#     return meta_lst
 
 def get_airflow_health():
     """
