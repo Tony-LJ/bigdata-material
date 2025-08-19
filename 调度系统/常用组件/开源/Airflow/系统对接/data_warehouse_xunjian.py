@@ -30,8 +30,7 @@ def get_datetime_timezone(iso_str, time_zone, format):
     :return:
     """
     # 解析ISO 8601字符串并设置为UTC时区
-    utc_dt = datetime.fromisoformat(iso_str)
-    utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+    utc_dt = datetime.fromisoformat(iso_str).replace(tzinfo=pytz.utc)
     # 定义目标时区（例如CST，即中国标准时间）
     cst_tz = pytz.timezone(time_zone)
     # 将UTC时间转换为CST时间
