@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # ################################
-# */10 * * * * /usr/bin/python3 /opt/project/data_warehouse_xunjian.py >> /opt/project/data_warehouse_xunjian.log 2>&1
+# 每天凌晨6点执行一次
+# 0 6 * * * /usr/bin/python3 /opt/project/data_warehouse_xunjian.py >> /opt/project/data_warehouse_xunjian.log 2>&1
 #
 # ###############################
 
@@ -20,6 +21,9 @@ from json import dumps
 AIRFLOW_URL = "http://10.53.0.75:8080/api/v1"
 USERNAME = "airflow"
 PASSWORD = "airflow"
+# AIRFLOW_URL = "http://10.53.1.167:8080/api/v1"
+# USERNAME = "luojie"
+# PASSWORD = "kw_luojie_241230"
 # ##################
 
 
@@ -98,6 +102,7 @@ if __name__ == '__main__':
 
     dag_base_info_arr = []
     dag_base_info_error_arr = []
+    warehouse_total_duration = 0.0
 
     for dag_id in dag_id_arr:
         url = f"{AIRFLOW_URL}/dags/{dag_id}/dagRuns"
@@ -116,6 +121,7 @@ if __name__ == '__main__':
         # 计算DAG_ID一次跑完的时间差
         time_difference = datetime.strptime(last_dag_excute_end_time, "%Y-%m-%d %H:%M:%S")  - datetime.strptime(last_dag_excute_start_time, "%Y-%m-%d %H:%M:%S")
         duration = str(time_difference)
+        warehouse_total_duration = warehouse_total_duration + time_difference.total_seconds()
         # print(print("时间差:", time_difference))
 
         dag_base_info = dagBaseInfo(dag_id=dag_id, last_excute_start_time=last_dag_excute_start_time, last_excute_end_time=last_dag_excute_end_time, duration=duration)
@@ -134,22 +140,24 @@ if __name__ == '__main__':
         xunjian_result = "正常"
         xunjian_team = "大数据团队"
         utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-        msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'>" + xunjian_team + "</font>\n " +
-               "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>" + xunjian_result + "</font>\n " +
-               "<font color='blue'> **数仓DAG详细情况** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_arr) + "</font>\n " +
-               "<font color='blue'> **巡检日期** </font>: <font color='black'>" + end_time + "</font>\n ")
+        msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'> **" + xunjian_team + "**</font>\n " +
+               "<font color='blue'> **巡检日期** </font>: <font color='black'>**" + end_time + "**</font>\n " +
+               "<font color='blue'> **整体耗时(h)** </font>: <font color='black'>**" + "{:.2f}".format(warehouse_total_duration/3600) + "**</font>\n " +
+               "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>**" + xunjian_result + "**</font>\n " +
+               "<font color='blue'> **数仓DAG详细情况** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_arr) + "</font>\n ")
     else:
         xunjian_result = "异常"
         xunjian_team = "大数据团队"
         utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-        msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'>" + xunjian_team + "</font>\n " +
-               "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>" + xunjian_result + "</font>\n " +
+        msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'>**" + xunjian_team + "**</font>\n " +
+               "<font color='blue'> **巡检日期** </font>: <font color='black'>**" + end_time + "**</font>\n " +
+               "<font color='blue'> **整体耗时(h)** </font>: <font color='black'>**" + "{:.2f}".format(warehouse_total_duration/3600) + "**</font>\n " +
+               "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>**" + xunjian_result + "**</font>\n " +
                "<font color='blue'> **数仓DAG详细情况** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_arr) + "</font>\n " +
-               "<font color='blue'> **异常DAG列表(执行时间>3小时)** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_error_arr) + "</font>\n " +
-               "<font color='blue'> **巡检日期** </font>: <font color='black'>" + end_time + "</font>\n ")
+               "<font color='blue'> **异常DAG列表(执行时间>3小时)** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_error_arr) + "</font>\n ")
     send_wechat_work_message(utcWebhookUrl,msg)
-    print('\n'.join(dag_base_info_arr))
-    print("dag_base_info_arr:{}".format(dag_base_info_arr))
+    # print('\n'.join(dag_base_info_arr))
+    # print("dag_base_info_arr:{}".format(dag_base_info_arr))
 
 
 
