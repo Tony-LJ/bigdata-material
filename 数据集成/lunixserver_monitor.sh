@@ -113,8 +113,8 @@ check_apparent_death(){
     echo "-------------------------------------------------------"
     echo "Lunix- isAlive:"
     IP_LIST=("10.53.0.71" "10.53.0.72" "10.53.0.73" "10.53.0.74" "10.53.0.75")
-    # 定义磁盘使用率的阈值（例如：响应时间为1min）
-    THRESHOLD="1"
+    # 定义磁盘使用率的阈值（例如：响应时间为5s）
+    THRESHOLD="5"
     for ip in "${IP_LIST[@]}"; do
         # 获取磁盘使用率 ssh root@10.53.0.72 curl -o /dev/null -s -w "%{time_total}"  http://www.baidu.com
         RESPONSE_TIME="$(ssh root@$ip curl -o /dev/null -s -w "%{time_total}"  http://www.baidu.com)"
