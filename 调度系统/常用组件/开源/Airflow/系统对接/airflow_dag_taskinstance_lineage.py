@@ -129,7 +129,7 @@ if __name__ == '__main__':
     print("Airflow Dag TaskInstance依赖关系解析")
     pg_helper = PostgresqlUtils("airflow")
     pg_helper.get_connection()
-    sql_str = "SELECT data FROM public.serialized_dag WHERE dag_id = 'kw_guoshu_incr_day_dag' "
+    sql_str = "SELECT data FROM public.serialized_dag WHERE dag_id = 'kw_inv_stock_in_incr_d_dag' "
     result = pg_helper.find_all(sql_str)
     print(result)
 
