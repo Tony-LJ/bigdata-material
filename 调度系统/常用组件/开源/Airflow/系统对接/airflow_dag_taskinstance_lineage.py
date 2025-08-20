@@ -9,7 +9,7 @@ date: 2025-08-19
 import psycopg2
 from psycopg2 import sql
 
-class PostgresqlUtiles(object):
+class PostgresqlUtils(object):
     # 可以初始化好，就不需要传值，database建议不传，因为你要查那个表在传的话会更灵活
     def __init__(self,
                  database=None,
@@ -128,9 +128,9 @@ class PostgresqlUtiles(object):
 
 if __name__ == '__main__':
     print("Airflow Dag TaskInstance依赖关系解析")
-    pg_helper = PostgresqlUtiles("airflow")
+    pg_helper = PostgresqlUtils("airflow")
     pg_helper.get_connection()
-    sql_str = "SELECT * FROM public.serialized_dag"
-    result = pg_helper.find_one(sql_str)
+    sql_str = "SELECT data FROM public.serialized_dag WHERE dag_id = 'kw_guoshu_incr_day_dag' "
+    result = pg_helper.find_all(sql_str)
     print(result)
 
