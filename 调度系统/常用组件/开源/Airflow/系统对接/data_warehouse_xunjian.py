@@ -2,7 +2,8 @@
 # ################################
 # 每天凌晨6点执行一次
 # 0 6 * * * /usr/bin/python3 /opt/project/data_warehouse_xunjian.py >> /opt/project/data_warehouse_xunjian.log 2>&1
-#
+# ssh root@10.53.0.75 python3 /srv/tmp/data_warehouse_xunjian.py
+# 0 6 * * * sshpass -p 'EEEeee111' ssh root@10.53.0.75 python3 /srv/tmp/data_warehouse_xunjian.py
 # ###############################
 
 import json
@@ -11,8 +12,8 @@ import os
 import time
 import requests
 from requests.auth import HTTPBasicAuth
-from bs4 import BeautifulSoup
-# from impala.dbapi import connect
+# from bs4 import BeautifulSoup
+# # from impala.dbapi import connect
 from datetime import datetime
 import pytz
 from json import dumps
