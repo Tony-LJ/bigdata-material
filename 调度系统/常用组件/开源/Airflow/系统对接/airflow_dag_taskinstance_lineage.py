@@ -10,7 +10,6 @@ import psycopg2
 from psycopg2 import sql
 
 class PostgresqlUtils(object):
-    # 可以初始化好，就不需要传值，database建议不传，因为你要查那个表在传的话会更灵活
     def __init__(self,
                  database=None,
                  user="airflow",
