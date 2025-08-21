@@ -61,7 +61,11 @@ def get_datetime_timezone(iso_str, time_zone, format):
     :return:
     """
     # 解析ISO 8601字符串并设置为UTC时区
-    utc_dt = datetime.fromisoformat(iso_str).replace(tzinfo=pytz.utc)
+    utc_dt = ''
+    if iso_str is None:
+        utc_dt = datetime.fromisoformat(str("2099-10-05T14:30:00")).replace(tzinfo=pytz.utc)
+    else:
+        utc_dt = datetime.fromisoformat(str(iso_str)).replace(tzinfo=pytz.utc)
     # 定义目标时区（例如CST，即中国标准时间）
     cst_tz = pytz.timezone(time_zone)
     # 将UTC时间转换为CST时间
@@ -120,7 +124,7 @@ if __name__ == '__main__':
         last_dag_excute_start_time = get_datetime_timezone(last_dag_start_time, 'Asia/Shanghai', '%Y-%m-%d %H:%M:%S')
         last_dag_excute_end_time = get_datetime_timezone(last_dag_end_time, 'Asia/Shanghai', '%Y-%m-%d %H:%M:%S')
         # 计算DAG_ID一次跑完的时间差
-        time_difference = datetime.strptime(last_dag_excute_end_time, "%Y-%m-%d %H:%M:%S")  - datetime.strptime(last_dag_excute_start_time, "%Y-%m-%d %H:%M:%S")
+        time_difference = datetime.strptime(str(last_dag_excute_end_time), "%Y-%m-%d %H:%M:%S")  - datetime.strptime(str(last_dag_excute_start_time), "%Y-%m-%d %H:%M:%S")
         duration = str(time_difference)
         warehouse_total_duration = warehouse_total_duration + time_difference.total_seconds()
         # print(print("时间差:", time_difference))

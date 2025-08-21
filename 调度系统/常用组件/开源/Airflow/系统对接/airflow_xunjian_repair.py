@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ################################
-# */10 * * * * /usr/bin/python3 /opt/project/prod_airflow_xunjian.py >> /opt/project/prod_airflow_xunjian.log 2>&1
+# */10 * * * * /usr/bin/python3 /opt/project/airflow_xunjian_repair.py >> /opt/project/airflow_xunjian_repair.log 2>&1
 #
 # ###############################
 
@@ -328,41 +328,40 @@ def update_data_to_finebi(table_name, update_type):
         print('failed')
         raise Exception('failed')
 
-def get_taskid_dependencies(dag_id, task_id):
-    """
-    获取指定DAG Task ID的前后依赖关系
-    :param dag_id:
-    :param task_id:
-    :return:
-    """
-    AIRFLOW_URL = "http://10.53.0.75:8080"
-    USERNAME = "airflow"
-    PASSWORD = "airflow"
-    session = requests.Session()
-    login_page = session.get(f'{AIRFLOW_URL}/login')
-    soup = BeautifulSoup(login_page.text, 'html.parser')
-    csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
-    print("csrf_token:{}".format(csrf_token))
-    credentials = {
-        'username': USERNAME,
-        'password': PASSWORD,
-        'csrf_token': csrf_token  # 添加 CSRF token
-    }
-    response = session.post(f'{AIRFLOW_URL}/login', data=credentials)
-    api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns'
-    response = session.get(api_url)
-    # 获取最新dagRuns
-    dag_runs = response.json()['dag_runs']
-    last_dag_run_id = dag_runs[-1]['dag_run_id']
-    # api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns/{last_dag_run_id}/taskInstances/{task_id}/dependencies'
-    api_url = f'{AIRFLOW_URL}/api/v1/dags/kw_guoshu_incr_day_dag/dagRuns/scheduled__2025-08-18T05:00:00+00:00/taskInstances/bi_data_dwd_cux_cux_lotnumtoebs_t/dependencies'
-    response = session.get(api_url)
-    print(response.text)
+# def get_taskid_dependencies(dag_id, task_id):
+#     """
+#     获取指定DAG Task ID的前后依赖关系
+#     :param dag_id:
+#     :param task_id:
+#     :return:
+#     """
+#     AIRFLOW_URL = "http://10.53.0.75:8080"
+#     USERNAME = "airflow"
+#     PASSWORD = "airflow"
+#     session = requests.Session()
+#     login_page = session.get(f'{AIRFLOW_URL}/login')
+#     soup = BeautifulSoup(login_page.text, 'html.parser')
+#     csrf_token = soup.find('input', {'name': 'csrf_token'})['value']
+#     print("csrf_token:{}".format(csrf_token))
+#     credentials = {
+#         'username': USERNAME,
+#         'password': PASSWORD,
+#         'csrf_token': csrf_token  # 添加 CSRF token
+#     }
+#     response = session.post(f'{AIRFLOW_URL}/login', data=credentials)
+#     api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns'
+#     response = session.get(api_url)
+#     # 获取最新dagRuns
+#     dag_runs = response.json()['dag_runs']
+#     last_dag_run_id = dag_runs[-1]['dag_run_id']
+#     # api_url = f'{AIRFLOW_URL}/api/v1/dags/{dag_id}/dagRuns/{last_dag_run_id}/taskInstances/{task_id}/dependencies'
+#     api_url = f'{AIRFLOW_URL}/api/v1/dags/kw_guoshu_incr_day_dag/dagRuns/scheduled__2025-08-18T05:00:00+00:00/taskInstances/bi_data_dwd_cux_cux_lotnumtoebs_t/dependencies'
+#     response = session.get(api_url)
+#     print(response.text)
 
 
 if __name__ == '__main__':
-    get_taskid_dependencies("kw_dws_ads_dag_new", "bi_ads_ads_oa_equip_accept_report_ds.sql")
-
+    # get_taskid_dependencies("kw_dws_ads_dag_new", "bi_ads_ads_oa_equip_accept_report_ds.sql")
     csrf_token, session = get_csrf_token()
     print("airflow_csrf_token:{}, airflow_session:{}".format(csrf_token, session))
     print(" >>>>>> Airflow健康度检查" )
@@ -376,10 +375,10 @@ if __name__ == '__main__':
     dags = get_dags(limit=50)
     active_dags = []
     # 指定需要额外处理的DAG
-    prod_dags = ['kw_ods_dag_new','kw_dwd_dim_dag_new','kw_dws_ads_dag_new']
+    prod_dags = ['kw_dwd_dim_dag_new','kw_dws_ads_dag_new']
 
     if dags:
-        print(f"Found {dags['total_entries']} DAGs")
+        # print(f"Found {dags['total_entries']} DAGs")
         for dag in dags['dags']:
             # print(f"- {dag['dag_id']}: {'Paused' if dag['is_paused'] else 'Active'}")
             # 获取生效的DAG List
