@@ -5,6 +5,7 @@ author: tony
 date: 2025-08-20
 """
 import requests
+import json
 
 
 class WeChatWorkMessage:
@@ -69,7 +70,7 @@ class WeChatWorkMessage:
 if __name__ == '__main__':
     end_time = "异常"
     xunjian_team = "大数据团队"
-    dag_base_info_arr = []
+    dag_base_info_error_arr = []
     utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
     msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'>**" + xunjian_team + "**</font>\n " +
            "<font color='blue'> **巡检日期** </font>: <font color='black'>**" + end_time + "**</font>\n " +
