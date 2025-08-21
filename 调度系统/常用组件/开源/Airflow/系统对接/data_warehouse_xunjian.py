@@ -150,6 +150,17 @@ if __name__ == '__main__':
                "<font color='blue'> **整体耗时(h)** </font>: <font color='black'>**" + "{:.2f}".format(warehouse_total_duration/3600) + "**</font>\n " +
                "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>**" + xunjian_result + "**</font>\n " +
                "<font color='blue'> **数仓DAG详细情况** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_arr) + "</font>\n ")
+    elif (warehouse_total_duration/3600) >= 10000 :
+        xunjian_result = "DAG还未运行完毕!"
+        xunjian_team = "大数据团队"
+        total_duration = "无法统计"
+        utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+        msg = ("<font color='blue'> ** 巡检人员** </font> :  <font color='black'>**" + xunjian_team + "**</font>\n " +
+               "<font color='blue'> **巡检日期** </font>: <font color='black'>**" + end_time + "**</font>\n " +
+               "<font color='blue'> **整体耗时(h)** </font>: <font color='black'>**" + total_duration + "**</font>\n " +
+               "<font color='blue'> **数仓DAG巡检结果** </font> :  <font color='black'>**" + xunjian_result + "**</font>\n " +
+               "<font color='blue'> **数仓DAG详细情况** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_arr) + "</font>\n " +
+               "<font color='blue'> **异常DAG列表(正在运行DAG)** </font> : \n <font color='black'>" + '\n'.join(dag_base_info_error_arr) + "</font>\n ")
     else:
         xunjian_result = "异常"
         xunjian_team = "大数据团队"
