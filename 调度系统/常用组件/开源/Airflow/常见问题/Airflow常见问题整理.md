@@ -8,6 +8,8 @@
   ![img](imgs/28362484378.png) </br>
 
 - [原因分析]() </br>
+  - 查看airflow安装服务器  </br>
+  ![img](imgs/628764357034.png) </br>
 ```.text
 
 ```
