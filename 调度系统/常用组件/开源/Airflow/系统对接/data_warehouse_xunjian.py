@@ -99,6 +99,7 @@ def send_wechat_work_message(webhook_url, content, mentioned_list=None):
         print(f"消息发送失败: {e}")
         return False
 
+
 if __name__ == '__main__':
     start_timestamp = time.localtime()
     start_time = time.strftime("%Y-%m-%d %H:%M:%S", start_timestamp)
