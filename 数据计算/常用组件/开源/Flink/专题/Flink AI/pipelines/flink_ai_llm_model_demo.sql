@@ -18,8 +18,8 @@ WITH(
 
 -- ML_PREDICT函数进行实时推理
 SELECT * FROM ML_PREDICT(
-    INPUT => TABLE input_table,
-    MODEL => MODEL my_model,
+    INPUT => TABLE product_source,
+    MODEL => MODEL compliance_model,
     ARGS => DESCRIPTOR(text),
     CONFIG => MAP['async', 'true']
 );
