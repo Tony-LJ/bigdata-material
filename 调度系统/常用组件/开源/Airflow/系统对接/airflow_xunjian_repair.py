@@ -375,7 +375,7 @@ if __name__ == '__main__':
     dags = get_dags(limit=50)
     active_dags = []
     # 指定需要额外处理的DAG
-    prod_dags = ['kw_dwd_dim_dag_new','kw_dws_ads_dag_new']
+    prod_dags = ['kw_dws_ads_dag_new']
 
     if dags:
         # print(f"Found {dags['total_entries']} DAGs")
