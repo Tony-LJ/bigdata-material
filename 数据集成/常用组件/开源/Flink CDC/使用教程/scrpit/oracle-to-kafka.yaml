@@ -1,0 +1,28 @@
+################################################################################
+# Description: Sync MySQL all tables to Console
+# 用法：cd /path/flink-cdc-*
+# ./bin/flink-cdc.sh /opt/module/flink-cdc-3.4.0/conf/mysql-to-console.yaml
+################################################################################
+source:
+  type: oracle
+  hostname: oracle-prod
+  port: 1521
+  username: hadoop
+  password: "encrypted_password"
+  database-name: ORCL_PROD
+  schema-name: SALES
+  table-name: ORDERS
+  scan.startup.mode: initial
+  debezium.log.mining.strategy: online_catalog
+  debezium.schema.evolution.parallelism: 2
+
+# 输出算子
+sink:
+  type: kafka
+  name: Kafka Sink
+  properties.bootstrap.servers: 10.53.0.73:9092,10.53.0.74:9092,10.53.0.75:9092
+  topic: kw-sync
+
+pipeline:
+  name: Sync MySQL Database to Console
+  parallelism: 1

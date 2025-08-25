@@ -1,0 +1,25 @@
+################################################################################
+# Description: Sync MySQL all tables to Console
+# 用法：cd /path/flink-cdc-*
+# ./bin/flink-cdc.sh /opt/module/flink-cdc-3.4.0/conf/mysql-to-console.yaml
+################################################################################
+source:
+  type: mysql
+  hostname: 10.53.0.71
+  port: 3306
+  username: root
+  password: LJkwhadoop2025!
+  tables: bigdata.\.*
+  server-id: 5400-5404
+  server-time-zone: UTC
+
+# 输出算子
+sink:
+  type: kafka
+  name: Kafka Sink
+  properties.bootstrap.servers: 10.53.0.73:9092,10.53.0.74:9092,10.53.0.75:9092
+  topic: kw-sync
+
+pipeline:
+  name: Sync MySQL Database to Console
+  parallelism: 1
