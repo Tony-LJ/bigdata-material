@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################
-# */1 * * * * sshpass -p 'EEEeee111' ssh root@10.53.0.1 sh /srv/tmp/impala_metadata_refresh.sh
+# */1 * * * * sshpass -p 'EEEeee111' ssh root@10.53.0.71 sh /srv/tmp/impala_metadata_refresh.sh
 ##############################
 # 设置Impala的连接属性
 im_host="10.53.0.71"
