@@ -5,12 +5,16 @@
 
 
 ## 基于Docker安装
+- [docker compose安装]()
 ```.text
-
-
+# 创建数据、日志、导入、插件目录
+mkdir -p /opt/module/neo4j/{data,logs,import,plugins}
 ```
-
-
+- [docker-compose.yml](docs/docker-compose.yml)
+```.text
+docker-compose up -d
+docker-compose logs -f  # 查看日志，出现 Started. 表示启动完成
+```
 
 
 ## 参考资料
