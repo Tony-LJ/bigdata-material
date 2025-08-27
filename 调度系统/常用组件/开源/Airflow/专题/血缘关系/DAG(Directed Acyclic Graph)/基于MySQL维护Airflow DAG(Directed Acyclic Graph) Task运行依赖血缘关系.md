@@ -26,6 +26,7 @@ CREATE TABLE `utc`.`airflow_dag_task_dependency` (
   `dwonstream_dag_id` varchar(100) DEFAULT NULL COMMENT '下游DAG Id',
   `dwonstream_task_id` varchar(100) DEFAULT NULL COMMENT '下游Task Id',
   `dwonstream_task_name` varchar(100) DEFAULT NULL COMMENT '下游Task名称', 
+  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
   `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
