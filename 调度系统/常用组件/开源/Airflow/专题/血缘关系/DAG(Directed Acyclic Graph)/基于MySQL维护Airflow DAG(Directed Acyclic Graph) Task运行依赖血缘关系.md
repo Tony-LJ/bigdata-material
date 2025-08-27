@@ -37,7 +37,7 @@ CREATE TABLE `utc`.`airflow_dag_task_dependency` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `dag_id` (`task_id`,`upstream_task_id`,`dwonstream_task_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表'
-
+------------------------------------------------------------------------------------------------------
 2. Airflow DAG Task脚本与实际作业映射关系表
 CREATE TABLE `utc`.`airflow_dag_task_file` (
   `id` bigint(200) NOT NULL AUTO_INCREMENT,
