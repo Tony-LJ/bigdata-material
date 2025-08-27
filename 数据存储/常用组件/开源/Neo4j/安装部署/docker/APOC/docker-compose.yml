@@ -23,3 +23,14 @@ services:
 
       # 时区配置
       NEO4J_db_temporal_timezone: Asia/Shanghai
+
+      # APOC插件配置 - 新增部分
+      NEO4J_PLUGINS: '["apoc"]'  # 自动安装APOC插件
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*  # 允许APOC执行所有操作
+      NEO4J_apoc_export_file_enabled: "true"  # 启用文件导出
+      NEO4J_apoc_import_file_enabled: "true"  # 启用文件导入
+      NEO4J_apoc_import_file_use_neo4j_config: "true"  # 使用Neo4j配置的导入路径
+
+
+
+
