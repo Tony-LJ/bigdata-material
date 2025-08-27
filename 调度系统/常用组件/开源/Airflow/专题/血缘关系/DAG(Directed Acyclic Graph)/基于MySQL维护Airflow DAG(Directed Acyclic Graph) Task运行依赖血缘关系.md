@@ -36,7 +36,7 @@ CREATE TABLE `utc`.`airflow_dag_task_dependency` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `dag_id` (`task_id`,`upstream_task_id`,`dwonstream_task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表'
 ------------------------------------------------------------------------------------------------------
 2. Airflow DAG Task脚本与实际作业映射关系信息表
 CREATE TABLE `utc`.`airflow_dag_task_info` (
@@ -59,8 +59,21 @@ CREATE TABLE `utc`.`airflow_dag_task_info` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `dag_id` (`task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本与实际作业映射关系信息表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本与实际作业映射关系信息表'
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
