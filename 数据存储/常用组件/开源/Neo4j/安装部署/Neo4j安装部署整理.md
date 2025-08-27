@@ -18,7 +18,7 @@ docker-compose logs -f  # 查看日志，出现 Started. 表示启动完成
 
 
 ## 参考资料
-
+- [Docker pull拉取镜像报错“Error response from daemon: Get "https://registry-1.docker.io/v2”解决办法](https://developer.aliyun.com/article/1281459)
 
 
 
