@@ -12,9 +12,11 @@ mkdir -p /opt/module/neo4j/{data,logs,import,plugins}
 ```
 - [docker-compose.yml](docs/docker-compose.yml)
 ```.text
-docker-compose up -d
+docker-compose up -d 或者 docker compose up -d 
 docker-compose logs -f  # 查看日志，出现 Started. 表示启动完成
 ```
+![img](imgs/2475986459.png) </br>
+![img](imgs/598764892345.png) </br>
 
 
 ## 参考资料
