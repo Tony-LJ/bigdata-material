@@ -80,7 +80,7 @@ CREATE TABLE `utc`.`airflow_dag_task_execute_info` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `dag_id` (`task_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本执行情况信息表'
-
+------------------------------------------------------------------------------------------------------
 5. Airflow DAG Task脚本上下游DAG拓扑依赖血缘查询表；是不是放到图数据库里面维护更好？
 CREATE TABLE `utc`.`airflow_dag_task_dag_dependencies` (
   `id` bigint(200) NOT NULL AUTO_INCREMENT,
@@ -108,6 +108,7 @@ CREATE TABLE `utc`.`airflow_dag_task_dag_dependencies` (
   KEY `dag_id` (`task_id`,`upstream_task_id`,`dwonstream_task_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本上下游依赖血缘查询表'
 
+------------------------------------------------------------------------------------------------------
 -- 重要数据数据指标统计SQL
 
 
