@@ -17,6 +17,7 @@ CREATE TABLE `utc`.`airflow_dag_task_dependency` (
   `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
   `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
   `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
+  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
   `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
   `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型',
   `upstream_dag_id` varchar(100) DEFAULT NULL COMMENT '上游DAG ID',
