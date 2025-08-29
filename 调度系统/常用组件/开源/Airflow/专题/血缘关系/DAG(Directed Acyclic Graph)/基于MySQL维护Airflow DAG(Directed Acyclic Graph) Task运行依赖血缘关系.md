@@ -11,110 +11,7 @@
 
 ## 库表设计
 ```.text
-1. Airflow DAG Task脚本上下游依赖血缘关系表
-CREATE TABLE `utc`.`airflow_dag_task_dependency` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型',
-  `upstream_dag_id` varchar(100) DEFAULT NULL COMMENT '上游DAG ID',
-  `upstream_dag_name` varchar(100) DEFAULT NULL COMMENT '上游DAG名称',
-  `upstream_task_id` varchar(100) DEFAULT NULL COMMENT '上游Task Id',
-  `upstream_task_name` varchar(100) DEFAULT NULL COMMENT '上游Task名称',
-  `dwonstream_dag_name` varchar(100) DEFAULT NULL COMMENT '下游DAG名称',  
-  `dwonstream_dag_id` varchar(100) DEFAULT NULL COMMENT '下游DAG Id',
-  `dwonstream_task_id` varchar(100) DEFAULT NULL COMMENT '下游Task Id',
-  `dwonstream_task_name` varchar(100) DEFAULT NULL COMMENT '下游Task名称', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`,`upstream_task_id`,`dwonstream_task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表'
-
-CREATE TABLE `utc`.`airflow_dag_task_dependency_v2` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `upstream_node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表V2'
-
-
-
-
-
-
-
-# 改进版本
-CREATE TABLE `utc`.`airflow_dag_task_upstream_lineage` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `upstream_node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖上游血缘关系表'
-
-CREATE TABLE `utc`.`airflow_dag_task_lineage` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖血缘关系表'
-
-CREATE TABLE `utc`.`airflow_dag_task_dwonstream_lineage` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `dwonstream_node_code` varchar(100) DEFAULT NULL COMMENT 'DAG节点编码：1-1、2-1、etc',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本依赖下游血缘关系表'
-
-
--- ###########################################################################################
+1. airflow dag task脚本依赖血缘dag顶点属性表
 drop table if exists utc.airflow_dag_task_nodes;
 create table if not exists utc.airflow_dag_task_nodes (
     dag_id varchar(100) not null comment 'dag id',
@@ -128,6 +25,7 @@ create table if not exists utc.airflow_dag_task_nodes (
     primary key (task_id) using btree
 )engine=innodb auto_increment=1 default charset=utf8mb4 comment='airflow dag task脚本依赖血缘dag顶点属性表';
 
+2. airflow dag task脚本依赖血缘dag边关系表
 drop table if exists utc.airflow_dag_task_edges; 
 create table if not exists utc.airflow_dag_task_edges (
     upstream_task_id varchar(100) not null comment '上游task id',
@@ -142,28 +40,12 @@ create table if not exists utc.airflow_dag_task_edges (
 -- DAG依赖关系查询
 select n.task_id, 
        n.task_file_name,
-       e.dwonstream_task_id as child_id
+       e.dwonstream_task_id
 from airflow_dag_task_nodes n
 left join airflow_dag_task_edges e on n.task_id = e.upstream_task_id;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ------------------------------------------------------------------------------------------------------
-2. Airflow DAG Task脚本与实际作业映射关系信息表
+3. Airflow DAG Task脚本与实际作业映射关系信息表
 CREATE TABLE `utc`.`airflow_dag_task_info` (
   `id` bigint(200) NOT NULL AUTO_INCREMENT,
   `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
@@ -186,10 +68,8 @@ CREATE TABLE `utc`.`airflow_dag_task_info` (
   KEY `dag_id` (`task_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本与实际作业映射关系信息表'
 
-
-
 ------------------------------------------------------------------------------------------------------
-3. Airflow DAG Task脚本执行情况信息表
+4. Airflow DAG Task脚本执行情况信息表
 CREATE TABLE `utc`.`airflow_dag_task_execute_info` (
   `id` bigint(200) NOT NULL AUTO_INCREMENT,
   `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
@@ -209,32 +89,6 @@ CREATE TABLE `utc`.`airflow_dag_task_execute_info` (
   KEY `dag_id` (`task_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本执行情况信息表'
 ------------------------------------------------------------------------------------------------------
-5. Airflow DAG Task脚本上下游DAG拓扑依赖血缘查询表；是不是放到图数据库里面维护更好？
-CREATE TABLE `utc`.`airflow_dag_task_dag_dependencies` (
-  `id` bigint(200) NOT NULL AUTO_INCREMENT,
-  `dag_id` varchar(100) DEFAULT NULL COMMENT 'DAG ID',
-  `dag_name` varchar(100) DEFAULT NULL COMMENT 'DAG名称',
-  `task_id` varchar(100) DEFAULT NULL COMMENT 'Task Id',
-  `task_name` varchar(100) DEFAULT NULL COMMENT 'Task名称',
-  `operator_type` varchar(100) DEFAULT NULL COMMENT 'Task Operator类型',
-  `upstream_dag_id` varchar(100) DEFAULT NULL COMMENT '上游DAG ID',
-  `upstream_dag_name` varchar(100) DEFAULT NULL COMMENT '上游DAG名称',
-  `upstream_task_id` varchar(100) DEFAULT NULL COMMENT '上游Task Id',
-  `upstream_task_name` varchar(100) DEFAULT NULL COMMENT '上游Task名称',
-  `dwonstream_dag_name` varchar(100) DEFAULT NULL COMMENT '下游DAG名称',  
-  `dwonstream_dag_id` varchar(100) DEFAULT NULL COMMENT '下游DAG Id',
-  `dwonstream_task_id` varchar(100) DEFAULT NULL COMMENT '下游Task Id',
-  `dwonstream_task_name` varchar(100) DEFAULT NULL COMMENT '下游Task名称', 
-  `is_dag_element` char(1) DEFAULT '0' COMMENT '是否满足DAG元素依赖规则',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `dag_id` (`task_id`,`upstream_task_id`,`dwonstream_task_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task脚本上下游依赖血缘查询表'
 
 ------------------------------------------------------------------------------------------------------
 -- 重要数据数据指标统计SQL
