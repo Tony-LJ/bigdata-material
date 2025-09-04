@@ -7,6 +7,9 @@ date: 2025-08-20
 
 from pymysql import connect
 import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
+import pandas
 
 
 class MysqlUtils(object):
@@ -139,24 +142,69 @@ class MysqlUtils(object):
         """
         self.execute_method(sql, params=params)
 
+def plot_dag_graph(edges,
+                   title="有向无环图",
+                   node_color='skyblue',
+                   figsize=(4, 3), seed=42):
+    """
+    绘制有向无环图
+    参数:
+        edges (list of tuples): 因果边，形如 [('A', 'B'), ('B', 'C')]
+        title (str): 图标题
+        node_color (str): 节点颜色
+        figsize (tuple): 图像大小
+        seed (int): 随机种子，控制布局稳定性
+    返回:
+        networkx.DiGraph: 构建的有向图对象
+    """
+    dag = nx.DiGraph()
+    dag.add_edges_from(edges)
+    plt.figure(figsize=figsize)
+    pos = nx.spring_layout(dag, seed=seed)
+    nx.draw(dag,
+            pos,
+            with_labels=True,
+            node_color=node_color,
+            node_size=2000,
+            edge_color='gray', font_size=10)
+    plt.title(title)
+    plt.show()
 
+    return dag
 
 
 if __name__ == '__main__':
+    G = nx.DiGraph()
     print("Mysql Airflow Dag TaskInstance依赖关系绘制")
     mysql_helper = MysqlUtils("mysql")
     mysql_helper.get_connection()
     sql_str = """
     select n.task_id, 
-       n.task_file_name,
-       e.dwonstream_task_id
+           n.task_file_name,
+           e.dwonstream_task_id
     from utc.airflow_dag_task_nodes n
     left join utc.airflow_dag_task_edges e on n.task_id = e.upstream_task_id;
     """
     results = mysql_helper.find_all(sql_str)
     columns = mysql_helper.get_columns(sql_str)
-    df = pd.DataFrame(results, columns=columns)
-    print(results)
-    print(columns)
+    df = pd.DataFrame(results, columns=columns).drop(columns=['task_file_name'])
+    # print(results)
+    # print(columns)
     print(df)
+    # 开始绘制Airflow DAG Task拓扑关系图
 
+    # for row in df.itertuples(index=True, name='Pandas'):
+    #     print(f"Index: {row.Index}, task_id: {row.task_id}, dwonstream_task_id: {row.dwonstream_task_id}")
+    #     if row.task_id == 'start':
+    #         print("从DAG起点开始遍历")
+    # for index, row in df.iterrows():
+    #     if row['task_id'] != '':  # 确保有父节点才添加边
+    #         G.add_edge(row['task_id'], row['dwonstream_task_id'])
+    #
+    # print(G.edges())
+
+    tuples_list = [(row['task_id'], row['dwonstream_task_id']) for index, row in df.iterrows()]
+    print(tuples_list)
+    DAG = plot_dag_graph(tuples_list, title="有向无环图（DAG）")
+    edges_df = pd.DataFrame(DAG.edges(), columns=["task_id", "dwonstream_task_id"])
+    edges_df

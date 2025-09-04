@@ -41,8 +41,9 @@ create table if not exists utc.airflow_dag_task_edges (
 select n.task_id, 
        n.task_file_name,
        e.dwonstream_task_id
-from airflow_dag_task_nodes n
-left join airflow_dag_task_edges e on n.task_id = e.upstream_task_id;
+from utc.airflow_dag_task_nodes n
+left join utc.airflow_dag_task_edges e on n.task_id = e.upstream_task_id
+where n.dag_id='kw_wip_dag';
 
 ------------------------------------------------------------------------------------------------------
 3. Airflow DAG Task脚本与实际作业映射关系信息表
