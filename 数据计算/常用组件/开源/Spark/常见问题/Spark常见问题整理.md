@@ -28,8 +28,10 @@
 作业运行失败
 ```
 - [原因分析]() </br>
+![img](imgs/7b985986709709.png)
 ```.text
 由日志信息：org.apache.spark.SparkArithmeticException: [DECIMAL_PRECISION_EXCEEDS_MAX_PRECISION] Decimal precision 136 exceeds max precision 38
+java.lang.ArithmeticException: Decimal precision 136 exceeds max precision 38
 可知:
 ```
 
