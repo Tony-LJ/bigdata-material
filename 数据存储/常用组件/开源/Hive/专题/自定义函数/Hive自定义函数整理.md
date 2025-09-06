@@ -25,6 +25,16 @@ GenericUDF有三个核心方法需要在自定义函数时重写
 这个方法用于描述 UDF 的信息，用于生成可读的查询执行计划（Explain），以便用户了解查询的结构和执行过程。
 ```
 
+- [GenericUDF使用]() </br>
+```.text
+
+```
+
+- [GenericUDF二次开发]() </br>
+```.text
+
+```
+
 ## UDF(org.apache.hadoop.hive.ql.exec.UDF)
 - [POM]() </br>
 ```.text
@@ -36,9 +46,20 @@ GenericUDF有三个核心方法需要在自定义函数时重写
 </dependency>
 ```
 
+- [UDF解析]() </br>
+```.text
 
+```
+- 
+- [UDF使用]() </br>
+```.text
 
+```
 
+- [UDF二次开发]() </br>
+```.text
+
+```
 
 
 
