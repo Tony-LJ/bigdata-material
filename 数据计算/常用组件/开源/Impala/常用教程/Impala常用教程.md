@@ -166,3 +166,24 @@ coalesce(cast(lotnumtoebs_id as string)  ,'-1')            as lotnumtoebs_id    
 --,substring(to_date(cast(stampdatetime as string)),1,4 )    as pt_y
 from    bi_ods.ods_cux_cux_mes_data_flow_all
 ```
+
+## 建库建表
+```.text
+-- 常规建表 row format格式
+DROP TABLE IF EXISTS bi_data.dwd_srm_suppliers_list_vl_ds;
+CREATE TABLE IF NOT EXISTS bi_data.dwd_srm_suppliers_list_vl_ds
+(
+  starttime STRING comment'统计日期',
+  supplier_code STRING comment'供应商编码',
+  supplier_name STRING comment'供应商名称',
+  supplier_level STRING comment'供应商等级',
+  supplier_lifecycle STRING comment'供应商周期',
+  is_strategic_supplier STRING comment'是否战略供应商',
+  last_update_date STRING comment'最新更新日期'
+)comment 'SRM供应商清单 '
+row format
+delimited fields terminated by '\001'
+lines terminated by '\n';
+INVALIDATE METADATA   bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 刷新表元数据
+COMPUTE STATS         bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 收集表信息
+```
