@@ -180,10 +180,10 @@ CREATE TABLE IF NOT EXISTS bi_data.dwd_srm_suppliers_list_vl_ds
   supplier_lifecycle STRING comment'供应商周期',
   is_strategic_supplier STRING comment'是否战略供应商',
   last_update_date STRING comment'最新更新日期'
-)comment 'SRM供应商清单 '
-row format
-delimited fields terminated by '\001'
-lines terminated by '\n';
+) COMMENT 'SRM供应商清单 '
+ROW FORMAT
+DELIMITED FIELDS TERMINATED BY '\001'
+LINES TERMINATED BY '\N';
 INVALIDATE METADATA   bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 刷新表元数据
 COMPUTE STATS         bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 收集表信息
 ```
