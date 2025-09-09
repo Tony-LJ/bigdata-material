@@ -1,12 +1,32 @@
 # -*- coding: utf-8 -*-
-
-from datetime import datetime, timedelta
+"""
+descr : kw_spark_ods_dag数据同步DAG
+auther : lj.michale
+create_date : 2025/2/19 15:54
+file_name : kw_spark_ods_dag.py
+"""
+import pendulum
+import airflow
 from airflow import DAG
+from airflow.decorators import task
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
-from pymysql import connect
+import pandas as pd
+from datetime import timedelta
+from datetime import datetime
+from impala.dbapi import connect
+import configparser
+import logging
+import requests
+import time
 
-# ########################################################
+# ################## 公共参数 #######################################
+ini_path =  "/root/airflow/dags/profile_kw.ini"
+context='999999'
+dag_name = 'customize_complex_dependencies_dag'
+# ##################################################################
+
 # DAG Task 任务列表
 dag_task_id_list = ['start',
                     'ODS_CUX_MES_ONLINE_BALA_T',
@@ -53,33 +73,48 @@ def get_dwonstream_task_id(task_id, tuples):
 
     return result[task_id]
 
-with DAG(
-        'customize_complex_dependencies_dag',
-        start_date=datetime(2025, 9, 9),
-        schedule_interval=timedelta(hours=1),
-        catchup=False,
-) as dag:
-    # 起始任务
-    start_task = EmptyOperator(task_id='start_task')
+# 默认参数
+default_args = {
+    'owner': 'luojie',
+    'depends_on_past': False,
+    'start_date': pendulum.yesterday(tz="Asia/Shanghai"),
+    'email': ['jie.luo2@kinwong.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 3,
+    'retry_delay': timedelta(minutes=8),
+    'concurrency': 12
+}
 
-    # 结束任务
-    end_task = EmptyOperator(task_id='end_task')
+dag = DAG(
+    dag_id=f'''{dag_name}''',
+    default_args=default_args,
+    description=f'''{dag_name}''',
+    schedule='32 2 * * *'
+)
 
-    # # 自定义Sub Dag
-    for task_id in dag_task_id_list:
-        script_name = task_id
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
-            depends_on_past=False,
-            bash_command=f''' echo {script_name} ;" ''',
-            dag=dag
-        )
-        start_task >> globals()[task_id] >> end_task
+start_task = EmptyOperator(task_id='start_task')
 
+end_task = EmptyOperator(task_id='end_task')
 
-    # 设置复杂依赖关系
-    for task_id in dag_task_id_list:
+# 自定义Sub Dag
+for task_id in dag_task_id_list:
+    script_name = task_id
+    globals()[script_name] = BashOperator(
+        task_id=f'''{script_name}''',
+        depends_on_past=False,
+        bash_command=f''' ssh root@10.53.0.71 "echo {script_name} ;" ''',
+        dag=dag
+    )
+    start_task >> globals()[task_id] >> end_task
+
+# 设置复杂依赖关系
+for task_id in dag_task_id_list:
+    if task_id != 'end':
         dwonstream_task_id_list = get_dwonstream_task_id(task_id,dag_task_id_depen_list)
         for dwonstream_task_id in dwonstream_task_id_list:
             print(f"task_id: {task_id}, dwonstream_task_id: {dwonstream_task_id}")
             globals()[task_id] >> globals()[dwonstream_task_id]
+    elif task_id == 'end':
+        print("不用管")
+

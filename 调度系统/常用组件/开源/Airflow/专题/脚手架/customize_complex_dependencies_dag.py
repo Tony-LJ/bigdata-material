@@ -1,0 +1,163 @@
+# -*- coding: utf-8 -*-
+"""
+descr : Airflow Dag Task自定血缘关系开发关系脚手架
+auther : lj.michale
+create_date : 2025/2/19 15:54
+file_name : kw_spark_ods_dag.py
+"""
+import pendulum
+import airflow
+from airflow import DAG
+from airflow.decorators import task
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from airflow.operators.empty import EmptyOperator
+import pandas as pd
+from datetime import timedelta
+from datetime import datetime
+from impala.dbapi import connect
+import configparser
+import logging
+import requests
+import time
+
+# ####################### 公共参数 ##################################
+dag_name = 'customize_complex_dependencies_dag'
+# ##################################################################
+
+# DAG Task 任务列表
+dag_task_id_list = ['pipelie_start',
+                    'ODS_CUX_MES_ONLINE_BALA_T',
+                    'ODS_APPS_WIP_DISCRETE_JOBS_V',
+                    'fine_bi_dws_wip_online_bala_ds',
+                    'fine_bi_ads_wip_online_bala_info_ds',
+                    'fine_bi_ads_wip_online_bala_detail_ds',
+                    'bi_data_dws_wip_online_bala_ds',
+                    'bi_data_dwd_cux_mes_online_bala',
+                    'bi_data_dwd_apps_wip_discrete_jobs_v',
+                    'bi_ads_ads_wip_online_bala_info_ds',
+                    'bi_ads_ads_wip_online_bala_detail_ds',
+                    'pipelie_end'
+                    ]
+
+# DAG Task 任务依赖关系列表
+dag_task_id_depen_list = [('pipelie_start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
+                          ('pipelie_start','ODS_CUX_MES_ONLINE_BALA_T'),
+                          ('ODS_APPS_WIP_DISCRETE_JOBS_V','bi_data_dwd_apps_wip_discrete_jobs_v'),
+                          ('ODS_CUX_MES_ONLINE_BALA_T','bi_data_dwd_cux_mes_online_bala'),
+                          ('fine_bi_dws_wip_online_bala_ds','end'),
+                          ('fine_bi_ads_wip_online_bala_info_ds','end'),
+                          ('fine_bi_ads_wip_online_bala_detail_ds','end'),
+                          ('pipelie_end',''),
+                          ('bi_data_dws_wip_online_bala_ds','fine_bi_dws_wip_online_bala_ds'),
+                          ('bi_data_dws_wip_online_bala_ds','bi_ads_ads_wip_online_bala_info_ds'),
+                          ('bi_data_dws_wip_online_bala_ds','bi_ads_ads_wip_online_bala_detail_ds'),
+                          ('bi_data_dwd_cux_mes_online_bala','bi_data_dws_wip_online_bala_ds'),
+                          ('bi_data_dwd_apps_wip_discrete_jobs_v','bi_data_dws_wip_online_bala_ds'),
+                          ('bi_ads_ads_wip_online_bala_info_ds','fine_bi_ads_wip_online_bala_detail_ds'),
+                          ('bi_ads_ads_wip_online_bala_detail_ds','fine_bi_ads_wip_online_bala_info_ds')
+                          ]
+
+# DAG Task 任务列表
+dag_task_file_path_list = [('pipelie_start','python','pipelie_start.py','/opt/script',''),
+                           ('ODS_CUX_MES_ONLINE_BALA_T','python','ODS_CUX_MES_ONLINE_BALA_T.py','/opt/script',''),
+                           ('ODS_APPS_WIP_DISCRETE_JOBS_V','python','ODS_APPS_WIP_DISCRETE_JOBS_V.py','/opt/script',''),
+                           ('fine_bi_dws_wip_online_bala_ds','sql','fine_bi_dws_wip_online_bala_ds.sql','/opt/script',''),
+                           ('fine_bi_ads_wip_online_bala_info_ds','sql','fine_bi_ads_wip_online_bala_info_ds.sql','/opt/script',''),
+                           ('fine_bi_ads_wip_online_bala_detail_ds','sql','fine_bi_ads_wip_online_bala_detail_ds.sql','/opt/script',''),
+                           ('bi_data_dws_wip_online_bala_ds','sql','bi_data_dws_wip_online_bala_ds.sql','/opt/script',''),
+                           ('bi_data_dwd_cux_mes_online_bala','sql','bi_data_dwd_cux_mes_online_bala.sql','/opt/script',''),
+                           ('bi_data_dwd_apps_wip_discrete_jobs_v','java','spark-common-core-1.0.1-SNAPSHOT-jar-with-dependencies.jar','/opt/script',''),
+                           ('bi_ads_ads_wip_online_bala_info_ds','sql','bi_ads_ads_wip_online_bala_info_ds.sql','/opt/script',''),
+                           ('bi_ads_ads_wip_online_bala_detail_ds','sql','bi_ads_ads_wip_online_bala_detail_ds.sql','/opt/script',''),
+                           ('pipelie_end','python','pipelie_end.py','/opt/script','')
+                          ]
+
+def get_dwonstream_task_id(task_id, tuples):
+    """
+    查询dwonstream_task_id
+    :param task_id
+    :param tuples
+    :return
+    """
+    result = {k: [] for k in {t[0] for t in tuples}}
+    for t in tuples:
+        result[t[0]].append(t[1])
+
+    return result[task_id]
+
+def get_task_elemet(task_id, tuples, n):
+    """
+    查询dwonstream_task_id
+    :param task_id
+    :param tuples
+    :param n
+    :return
+    """
+    result = {k: [] for k in {t[0] for t in tuples}}
+    for t in tuples:
+        result[t[0]].append(t[n])
+
+    return result[task_id]
+
+# 默认参数
+default_args = {
+    'owner': 'luojie',
+    'depends_on_past': False,
+    'start_date': pendulum.yesterday(tz="Asia/Shanghai"),
+    'email': ['jie.luo2@kinwong.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 3,
+    'retry_delay': timedelta(minutes=8),
+    'concurrency': 12
+}
+
+dag = DAG(
+    dag_id=f'''{dag_name}''',
+    default_args=default_args,
+    description=f'''{dag_name}''',
+    schedule='32 2 * * *'
+)
+
+# 自定义Sub Dag
+for task_id in dag_task_id_list:
+    task_kind = get_task_elemet(task_id, dag_task_file_path_list,1)
+    task_file_name = get_task_elemet(task_id, dag_task_file_path_list,2)
+    task_file_path = get_task_elemet(task_id, dag_task_file_path_list,3)
+    script_name = task_id
+    if task_id == "sql":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    elif task_id == "python":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    elif task_id == "java":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    else:
+        print("未知作业!")
+    # start_task >> globals()[task_id] >> end_task
+
+# 设置复杂依赖关系
+for task_id in dag_task_id_list:
+    if task_id != 'pipelie_end':
+        dwonstream_task_id_list = get_dwonstream_task_id(task_id,dag_task_id_depen_list)
+        for dwonstream_task_id in dwonstream_task_id_list:
+            print(f"task_id: {task_id}, dwonstream_task_id: {dwonstream_task_id}")
+            globals()[task_id] >> globals()[dwonstream_task_id]
+    elif task_id == 'pipelie_end':
+        print("不用管")
+
