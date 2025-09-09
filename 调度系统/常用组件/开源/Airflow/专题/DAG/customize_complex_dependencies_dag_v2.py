@@ -74,7 +74,7 @@ with DAG(
             bash_command=f''' echo {script_name} ;" ''',
             dag=dag
         )
-        start_task >> globals()[task_id] >> end_task
+        # start_task >> globals()[task_id] >> end_task
 
 
     # 设置复杂依赖关系

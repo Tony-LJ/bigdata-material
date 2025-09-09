@@ -106,7 +106,7 @@ for task_id in dag_task_id_list:
         bash_command=f''' ssh root@10.53.0.71 "echo {script_name} ;" ''',
         dag=dag
     )
-    start_task >> globals()[task_id] >> end_task
+    # start_task >> globals()[task_id] >> end_task
 
 # 设置复杂依赖关系
 for task_id in dag_task_id_list:

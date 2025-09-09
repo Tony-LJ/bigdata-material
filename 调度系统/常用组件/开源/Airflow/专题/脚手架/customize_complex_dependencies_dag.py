@@ -5,6 +5,7 @@ auther : lj.michale
 create_date : 2025/2/19 15:54
 file_name : kw_spark_ods_dag.py
 """
+
 import pendulum
 import airflow
 from airflow import DAG
@@ -26,7 +27,7 @@ dag_name = 'customize_complex_dependencies_dag'
 # ##################################################################
 
 # DAG Task 任务列表
-dag_task_id_list = ['pipelie_start',
+dag_task_id_list = ['start',
                     'ODS_CUX_MES_ONLINE_BALA_T',
                     'ODS_APPS_WIP_DISCRETE_JOBS_V',
                     'fine_bi_dws_wip_online_bala_ds',
@@ -37,18 +38,18 @@ dag_task_id_list = ['pipelie_start',
                     'bi_data_dwd_apps_wip_discrete_jobs_v',
                     'bi_ads_ads_wip_online_bala_info_ds',
                     'bi_ads_ads_wip_online_bala_detail_ds',
-                    'pipelie_end'
+                    'end'
                     ]
 
 # DAG Task 任务依赖关系列表
-dag_task_id_depen_list = [('pipelie_start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
-                          ('pipelie_start','ODS_CUX_MES_ONLINE_BALA_T'),
+dag_task_id_depen_list = [('start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
+                          ('start','ODS_CUX_MES_ONLINE_BALA_T'),
                           ('ODS_APPS_WIP_DISCRETE_JOBS_V','bi_data_dwd_apps_wip_discrete_jobs_v'),
                           ('ODS_CUX_MES_ONLINE_BALA_T','bi_data_dwd_cux_mes_online_bala'),
                           ('fine_bi_dws_wip_online_bala_ds','end'),
                           ('fine_bi_ads_wip_online_bala_info_ds','end'),
                           ('fine_bi_ads_wip_online_bala_detail_ds','end'),
-                          ('pipelie_end',''),
+                          ('end',''),
                           ('bi_data_dws_wip_online_bala_ds','fine_bi_dws_wip_online_bala_ds'),
                           ('bi_data_dws_wip_online_bala_ds','bi_ads_ads_wip_online_bala_info_ds'),
                           ('bi_data_dws_wip_online_bala_ds','bi_ads_ads_wip_online_bala_detail_ds'),
@@ -59,7 +60,7 @@ dag_task_id_depen_list = [('pipelie_start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
                           ]
 
 # DAG Task 任务列表
-dag_task_file_path_list = [('pipelie_start','python','pipelie_start.py','/opt/script',''),
+dag_task_file_path_list = [('start','python','start.py','/opt/script',''),
                            ('ODS_CUX_MES_ONLINE_BALA_T','python','ODS_CUX_MES_ONLINE_BALA_T.py','/opt/script',''),
                            ('ODS_APPS_WIP_DISCRETE_JOBS_V','python','ODS_APPS_WIP_DISCRETE_JOBS_V.py','/opt/script',''),
                            ('fine_bi_dws_wip_online_bala_ds','sql','fine_bi_dws_wip_online_bala_ds.sql','/opt/script',''),
@@ -70,7 +71,7 @@ dag_task_file_path_list = [('pipelie_start','python','pipelie_start.py','/opt/sc
                            ('bi_data_dwd_apps_wip_discrete_jobs_v','java','spark-common-core-1.0.1-SNAPSHOT-jar-with-dependencies.jar','/opt/script',''),
                            ('bi_ads_ads_wip_online_bala_info_ds','sql','bi_ads_ads_wip_online_bala_info_ds.sql','/opt/script',''),
                            ('bi_ads_ads_wip_online_bala_detail_ds','sql','bi_ads_ads_wip_online_bala_detail_ds.sql','/opt/script',''),
-                           ('pipelie_end','python','pipelie_end.py','/opt/script','')
+                           ('end','python','end.py','/opt/script','')
                           ]
 
 def get_dwonstream_task_id(task_id, tuples):
@@ -117,7 +118,7 @@ dag = DAG(
     dag_id=f'''{dag_name}''',
     default_args=default_args,
     description=f'''{dag_name}''',
-    schedule='32 2 * * *'
+    schedule='30 2 * * *'
 )
 
 # 自定义Sub Dag
@@ -126,38 +127,45 @@ for task_id in dag_task_id_list:
     task_file_name = get_task_elemet(task_id, dag_task_file_path_list,2)
     task_file_path = get_task_elemet(task_id, dag_task_file_path_list,3)
     script_name = task_id
-    if task_id == "sql":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
-            depends_on_past=False,
-            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-            dag=dag
-        )
-    elif task_id == "python":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
-            depends_on_past=False,
-            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-            dag=dag
-        )
-    elif task_id == "java":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
-            depends_on_past=False,
-            bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-            dag=dag
-        )
-    else:
-        print("未知作业!")
+    globals()[script_name] = BashOperator(
+        task_id=f'''{script_name}''',
+        depends_on_past=False,
+        bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+        dag=dag
+    )
+    # if task_id == "sql":
+    #     globals()[script_name] = BashOperator(
+    #         task_id=f'''{script_name}''',
+    #         depends_on_past=False,
+    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+    #         dag=dag
+    #     )
+    # elif task_id == "python":
+    #     globals()[script_name] = BashOperator(
+    #         task_id=f'''{script_name}''',
+    #         depends_on_past=False,
+    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+    #         dag=dag
+    #     )
+    # elif task_id == "java":
+    #     globals()[script_name] = BashOperator(
+    #         task_id=f'''{script_name}''',
+    #         depends_on_past=False,
+    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+    #         dag=dag
+    #     )
+    # else:
+    #     print("未知作业!")
     # start_task >> globals()[task_id] >> end_task
+
 
 # 设置复杂依赖关系
 for task_id in dag_task_id_list:
-    if task_id != 'pipelie_end':
+    if task_id != 'end':
         dwonstream_task_id_list = get_dwonstream_task_id(task_id,dag_task_id_depen_list)
         for dwonstream_task_id in dwonstream_task_id_list:
             print(f"task_id: {task_id}, dwonstream_task_id: {dwonstream_task_id}")
             globals()[task_id] >> globals()[dwonstream_task_id]
-    elif task_id == 'pipelie_end':
+    elif task_id == 'end':
         print("不用管")
 
