@@ -183,7 +183,8 @@ if __name__ == '__main__':
            n.task_file_name,
            e.dwonstream_task_id
     from utc.airflow_dag_task_nodes n
-    left join utc.airflow_dag_task_edges e on n.task_id = e.upstream_task_id;
+    left join utc.airflow_dag_task_edges e on n.task_id = e.upstream_task_id
+    where n.dag_id='kw_wip_dag';
     """
     results = mysql_helper.find_all(sql_str)
     columns = mysql_helper.get_columns(sql_str)
@@ -203,8 +204,11 @@ if __name__ == '__main__':
     #
     # print(G.edges())
 
-    tuples_list = [(row['task_id'], row['dwonstream_task_id']) for index, row in df.iterrows()]
-    print(tuples_list)
-    DAG = plot_dag_graph(tuples_list, title="有向无环图（DAG）")
-    edges_df = pd.DataFrame(DAG.edges(), columns=["task_id", "dwonstream_task_id"])
-    edges_df
+    # tuples_list = [(row['task_id'], row['dwonstream_task_id']) for index, row in df.iterrows()]
+    # print(tuples_list)
+    # DAG = plot_dag_graph(tuples_list, title="有向无环图（DAG）")
+    # edges_df = pd.DataFrame(DAG.edges(), columns=["task_id", "dwonstream_task_id"])
+    # edges_df
+    
+    for index, row in df.iterrows():
+        print(f"Index: {index}, task_id: {row['task_id']}, dwonstream_task_id: {row['dwonstream_task_id']}")

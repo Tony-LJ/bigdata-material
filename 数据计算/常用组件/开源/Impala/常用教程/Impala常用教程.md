@@ -187,3 +187,8 @@ LINES TERMINATED BY '\N';
 INVALIDATE METADATA   bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 刷新表元数据
 COMPUTE STATS         bi_data.dwd_srm_suppliers_list_vl_ds  ;  -- 收集表信息
 ```
+
+## 字符串截取
+```.text
+substring(inv_organization_desc,4,length(inv_organization_desc)-1)  as inv_organization_desc
+```
