@@ -73,3 +73,4 @@ hadoop fs -chmod -R 775 hdfs://10.53.0.71:8020/user/hive/warehouse/bi_data.db/dw
 
 
 ## 参考资料
+- [impala没有write权限插入数据到hive表：impala does not have write access to at least on HDFS path hdfs://...](https://blog.csdn.net/lukabruce/article/details/84070025)
