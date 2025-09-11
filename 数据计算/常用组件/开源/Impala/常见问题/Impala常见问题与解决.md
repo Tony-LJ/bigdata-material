@@ -68,6 +68,8 @@ hadoop fs -chmod -R 775 hdfs://10.53.0.71:8020/user/hive/warehouse/bi_data.db/dw
 方式2：
 hadoop fs -chmod 775 /user/hive/warehouse/bi_data.db/dwd_material_test_plan_detail_ds
 invalidate metadata  bi_data.dwd_material_test_plan_detail_ds;    -- hdfs集群上更改数据库表权限之后，一定要记住登录到impala-shell上使用invaladate metadata命令进行元数据更新，否则更改的权限在impala状态下是不生效的！！！
+方式3：
+impala-shell -u root -f /root/bin/t_xiaoke/dwd_t_std_crumb_event_process/dwd_t_std_crumb_event_process.sql --var=execute_date="'2022-05-07'"
 ```
 
 
