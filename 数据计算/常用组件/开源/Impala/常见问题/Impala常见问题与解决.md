@@ -63,7 +63,11 @@ Impala读写HDFS权限不够,需要增加写入权限
 - [问题解决]() </br>
 ```.text
 执行赋权操作:
+方式1：
 hadoop fs -chmod -R 775 hdfs://10.53.0.71:8020/user/hive/warehouse/bi_data.db/dws_fin_goods_income_cost_ds
+方式2：
+hadoop fs -chmod 775 /user/hive/warehouse/bi_data.db/dwd_material_test_plan_detail_ds
+invalidate metadata  bi_data.dwd_material_test_plan_detail_ds;    -- hdfs集群上更改数据库表权限之后，一定要记住登录到impala-shell上使用invaladate metadata命令进行元数据更新，否则更改的权限在impala状态下是不生效的！！！
 ```
 
 
