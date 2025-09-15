@@ -25,8 +25,7 @@ import time
 # ####################### 公共参数 ##################################
 dag_name = 'customize_complex_dependencies_dag'
 # ##################################################################
-
-# DAG Task 任务列表
+# DAG Task任务列表(MySQL: utc.airflow_dag_task_pipeline)
 dag_task_id_list = ['start',
                     'ODS_CUX_MES_ONLINE_BALA_T',
                     'ODS_APPS_WIP_DISCRETE_JOBS_V',
@@ -41,7 +40,7 @@ dag_task_id_list = ['start',
                     'end'
                     ]
 
-# DAG Task 任务依赖关系列表
+# DAG Task任务依赖关系列表(MySQL: utc.airflow_dag_task_lineage)
 dag_task_id_depen_list = [('start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
                           ('start','ODS_CUX_MES_ONLINE_BALA_T'),
                           ('ODS_APPS_WIP_DISCRETE_JOBS_V','bi_data_dwd_apps_wip_discrete_jobs_v'),
@@ -59,7 +58,7 @@ dag_task_id_depen_list = [('start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
                           ('bi_ads_ads_wip_online_bala_detail_ds','fine_bi_ads_wip_online_bala_info_ds')
                           ]
 
-# DAG Task 任务列表
+# DAG Task属性列表(MySQL: utc.airflow_dag_task_attribute)
 dag_task_file_path_list = [('start','python','start.py','/opt/script',''),
                            ('ODS_CUX_MES_ONLINE_BALA_T','python','ODS_CUX_MES_ONLINE_BALA_T.py','/opt/script',''),
                            ('ODS_APPS_WIP_DISCRETE_JOBS_V','python','ODS_APPS_WIP_DISCRETE_JOBS_V.py','/opt/script',''),
@@ -126,6 +125,7 @@ for task_id in dag_task_id_list:
     task_kind = get_task_elemet(task_id, dag_task_file_path_list,1)
     task_file_name = get_task_elemet(task_id, dag_task_file_path_list,2)
     task_file_path = get_task_elemet(task_id, dag_task_file_path_list,3)
+
     if task_kind == "sql":
         globals()[task_id] = BashOperator(
             task_id=f'''{task_id}''',
