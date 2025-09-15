@@ -28,7 +28,7 @@ INSERT INTO airflow_dag_task_pipeline (dag_id, task_id, create_by, create_time, 
 INSERT INTO airflow_dag_task_pipeline (dag_id, task_id, create_by, create_time, update_by, update_time) VALUES ('kw_wip_dag', 'ODS_CUX_MES_ONLINE_BALA_T', 'tony', '2025-09-15 15:43:06', 'tony', '2025-09-15 15:43:06');
 INSERT INTO airflow_dag_task_pipeline (dag_id, task_id, create_by, create_time, update_by, update_time) VALUES ('kw_wip_dag', 'start', 'tony', '2025-09-15 15:43:08', 'tony', '2025-09-15 15:43:08');
 
--- airflow dag task任务依赖关系列表
+-- Airflow DAG Task任务依赖关系列表
 drop table if exists airflow_dag_task_lineage;
 create table if not exists airflow_dag_task_lineage (
     upstream_task_id varchar(100) not null comment '上游task id',
@@ -57,7 +57,7 @@ INSERT INTO airflow_dag_task_lineage (upstream_task_id, dwonstream_task_id, crea
 INSERT INTO airflow_dag_task_lineage (upstream_task_id, dwonstream_task_id, create_by, create_time, update_by, update_time) VALUES ('start', 'ODS_APPS_WIP_DISCRETE_JOBS_V', 'tony', '2025-09-15 15:43:06', 'tony', '2025-09-15 15:43:06');
 INSERT INTO airflow_dag_task_lineage (upstream_task_id, dwonstream_task_id, create_by, create_time, update_by, update_time) VALUES ('start', 'ODS_CUX_MES_ONLINE_BALA_T', 'tony', '2025-09-15 15:43:08', 'tony', '2025-09-15 15:43:08');
 
--- airflow dag task属性表
+-- Airflow DAG Task属性表
 drop table if exists airflow_dag_task_attribute;
 create table if not exists airflow_dag_task_attribute (
     dag_id varchar(100) not null comment 'dag id',
