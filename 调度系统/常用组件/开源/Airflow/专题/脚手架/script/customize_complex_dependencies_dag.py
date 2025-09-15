@@ -125,7 +125,6 @@ for task_id in dag_task_id_list:
     task_kind = get_task_elemet(task_id, dag_task_file_path_list,1)
     task_file_name = get_task_elemet(task_id, dag_task_file_path_list,2)
     task_file_path = get_task_elemet(task_id, dag_task_file_path_list,3)
-
     if task_kind == "sql":
         globals()[task_id] = BashOperator(
             task_id=f'''{task_id}''',
@@ -162,7 +161,6 @@ for task_id in dag_task_id_list:
             dag=dag
         )
 
-
 # 设置Task复杂依赖关系
 for task_id in dag_task_id_list:
     if task_id != 'end':
@@ -171,5 +169,5 @@ for task_id in dag_task_id_list:
             print(f"task_id: {task_id}, dwonstream_task_id: {dwonstream_task_id}")
             globals()[task_id] >> globals()[dwonstream_task_id]
     elif task_id == 'end':
-        print("不用管")
+        print("pipeline计算任务结束!")
 

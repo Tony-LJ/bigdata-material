@@ -91,3 +91,24 @@ INSERT INTO airflow_dag_task_attribute (dag_id, dag_name, task_id, task_name, ta
 INSERT INTO airflow_dag_task_attribute (dag_id, dag_name, task_id, task_name, task_importance, task_file_name, task_file_path, task_type, task_param, operator_type, remark, del_flag, create_by, create_time, update_by, update_time) VALUES ('kw_wip_dag', 'WIP', 'ODS_APPS_WIP_DISCRETE_JOBS_V', 'WIP_DISCRETE_JOBS抽数任务', 'p1', 'ODS_APPS_WIP_DISCRETE_JOBS_V.sh', '/opt/script', 'shell', 'sqoop作业', 'BashOperator', '测试Task', '0', 'tony', '2025-09-15 15:43:03', 'tony', '2025-09-15 15:43:03');
 INSERT INTO airflow_dag_task_attribute (dag_id, dag_name, task_id, task_name, task_importance, task_file_name, task_file_path, task_type, task_param, operator_type, remark, del_flag, create_by, create_time, update_by, update_time) VALUES ('kw_wip_dag', 'WIP', 'ODS_CUX_MES_ONLINE_BALA_T', 'MES_ONLINE_BALA抽数任务', 'p1', 'ODS_CUX_MES_ONLINE_BALA_T.sh', '/opt/script', 'shell', 'sqoop作业', 'BashOperator', '测试Task', '0', 'tony', '2025-09-15 15:43:06', 'tony', '2025-09-15 15:43:06');
 INSERT INTO airflow_dag_task_attribute (dag_id, dag_name, task_id, task_name, task_importance, task_file_name, task_file_path, task_type, task_param, operator_type, remark, del_flag, create_by, create_time, update_by, update_time) VALUES ('kw_wip_dag', 'WIP', 'start', 'pipeline-start', 'p5', 'start.py', '/opt/script', 'python', 'python作业', 'BashOperator', '测试Task', '0', 'tony', '2025-09-15 15:43:08', 'tony', '2025-09-15 15:43:08');
+
+drop table if exists airflow_dag_task_msg_push;
+create table if not exists airflow_dag_task_msg_push (
+    dag_id varchar(100) not null comment 'dag id',
+    dag_name varchar(100) default null comment 'dag名称',
+    task_id varchar(100) not null comment 'task id',
+    task_name varchar(100) default null comment 'task名称',
+    msg_content varchar(100) default null comment '消息推送内容',
+    remark varchar(255) default null comment '备注',
+    del_flag char(1) default '0' comment '删除标记',
+    create_by varchar(64) default null comment '创建人',
+    create_time datetime default null comment '创建时间',
+    update_by varchar(64) default null comment '更新人',
+    update_time datetime default null comment '更新时间',
+    primary key (dag_id,task_id) using btree
+) engine=innodb default charset=utf8mb4 comment='airflow dag task消息推送配置表';
+
+
+
+
+
