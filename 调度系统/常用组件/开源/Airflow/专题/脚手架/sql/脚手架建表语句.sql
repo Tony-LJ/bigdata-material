@@ -24,7 +24,7 @@ CREATE TABLE `utc.airflow_dag_task_lineage` (
     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`upstream_task_id`,`dwonstream_task_id`),
     KEY `dwonstream_task_id` (`dwonstream_task_id`),
-    CONSTRAINT `aairflow_dag_task_lineage_ibfk_1` FOREIGN KEY (`upstream_task_id`) REFERENCES `airflow_dag_task_pipeline` (`task_id`),
+    CONSTRAINT `airflow_dag_task_lineage_ibfk_1` FOREIGN KEY (`upstream_task_id`) REFERENCES `airflow_dag_task_pipeline` (`task_id`),
     CONSTRAINT `airflow_dag_task_lineage_ibfk_2` FOREIGN KEY (`dwonstream_task_id`) REFERENCES `airflow_dag_task_pipeline` (`task_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Airflow DAG Task任务依赖关系表'
 
