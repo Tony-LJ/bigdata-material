@@ -163,7 +163,7 @@ for task_id in dag_task_id_list:
         )
 
 
-# 设置复杂依赖关系
+# 设置Task复杂依赖关系
 for task_id in dag_task_id_list:
     if task_id != 'end':
         dwonstream_task_id_list = get_dwonstream_task_id(task_id,dag_task_id_depen_list)
