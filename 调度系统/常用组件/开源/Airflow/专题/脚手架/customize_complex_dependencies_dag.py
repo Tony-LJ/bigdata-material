@@ -89,7 +89,7 @@ def get_dwonstream_task_id(task_id, tuples):
 
 def get_task_elemet(task_id, tuples, n):
     """
-    查询dwonstream_task_id
+    获取[('a1','a2')]中第n个元素
     :param task_id
     :param tuples
     :param n
@@ -130,33 +130,39 @@ for task_id in dag_task_id_list:
     globals()[script_name] = BashOperator(
         task_id=f'''{script_name}''',
         depends_on_past=False,
-        bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
+        bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
         dag=dag
     )
-    # if task_id == "sql":
-    #     globals()[script_name] = BashOperator(
-    #         task_id=f'''{script_name}''',
-    #         depends_on_past=False,
-    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-    #         dag=dag
-    #     )
-    # elif task_id == "python":
-    #     globals()[script_name] = BashOperator(
-    #         task_id=f'''{script_name}''',
-    #         depends_on_past=False,
-    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-    #         dag=dag
-    #     )
-    # elif task_id == "java":
-    #     globals()[script_name] = BashOperator(
-    #         task_id=f'''{script_name}''',
-    #         depends_on_past=False,
-    #         bash_command=f''' ssh root@10.53.0.71 "echo /{task_file_path}/{task_file_name} ;" ''',
-    #         dag=dag
-    #     )
-    # else:
-    #     print("未知作业!")
-    # start_task >> globals()[task_id] >> end_task
+    if task_kind == "sql":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    elif task_kind == "python":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    elif task_kind == "java":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    elif task_kind == "shell":
+        globals()[script_name] = BashOperator(
+            task_id=f'''{script_name}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
+    else:
+        print("未知非法作业，不支持运行!")
 
 
 # 设置复杂依赖关系
