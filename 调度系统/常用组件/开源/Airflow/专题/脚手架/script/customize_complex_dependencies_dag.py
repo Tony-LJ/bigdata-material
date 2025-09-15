@@ -60,8 +60,8 @@ dag_task_id_depen_list = [('start','ODS_APPS_WIP_DISCRETE_JOBS_V'),
 
 # DAG Task属性列表(MySQL: utc.airflow_dag_task_attribute)
 dag_task_file_path_list = [('start','python','start.py','/opt/script',''),
-                           ('ODS_CUX_MES_ONLINE_BALA_T','python','ODS_CUX_MES_ONLINE_BALA_T.py','/opt/script',''),
-                           ('ODS_APPS_WIP_DISCRETE_JOBS_V','python','ODS_APPS_WIP_DISCRETE_JOBS_V.py','/opt/script',''),
+                           ('ODS_CUX_MES_ONLINE_BALA_T','shell','ODS_CUX_MES_ONLINE_BALA_T.sh','/opt/script',''),
+                           ('ODS_APPS_WIP_DISCRETE_JOBS_V','shell','ODS_APPS_WIP_DISCRETE_JOBS_V.sh','/opt/script',''),
                            ('fine_bi_dws_wip_online_bala_ds','sql','fine_bi_dws_wip_online_bala_ds.sql','/opt/script',''),
                            ('fine_bi_ads_wip_online_bala_info_ds','sql','fine_bi_ads_wip_online_bala_info_ds.sql','/opt/script',''),
                            ('fine_bi_ads_wip_online_bala_detail_ds','sql','fine_bi_ads_wip_online_bala_detail_ds.sql','/opt/script',''),
