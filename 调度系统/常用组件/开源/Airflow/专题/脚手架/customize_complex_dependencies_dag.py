@@ -126,43 +126,41 @@ for task_id in dag_task_id_list:
     task_kind = get_task_elemet(task_id, dag_task_file_path_list,1)
     task_file_name = get_task_elemet(task_id, dag_task_file_path_list,2)
     task_file_path = get_task_elemet(task_id, dag_task_file_path_list,3)
-    script_name = task_id
-    globals()[script_name] = BashOperator(
-        task_id=f'''{script_name}''',
-        depends_on_past=False,
-        bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
-        dag=dag
-    )
     if task_kind == "sql":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
+        globals()[task_id] = BashOperator(
+            task_id=f'''{task_id}''',
             depends_on_past=False,
             bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
             dag=dag
         )
     elif task_kind == "python":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
+        globals()[task_id] = BashOperator(
+            task_id=f'''{task_id}''',
             depends_on_past=False,
             bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
             dag=dag
         )
     elif task_kind == "java":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
+        globals()[task_id] = BashOperator(
+            task_id=f'''{task_id}''',
             depends_on_past=False,
             bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
             dag=dag
         )
     elif task_kind == "shell":
-        globals()[script_name] = BashOperator(
-            task_id=f'''{script_name}''',
+        globals()[task_id] = BashOperator(
+            task_id=f'''{task_id}''',
             depends_on_past=False,
             bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
             dag=dag
         )
     else:
-        print("未知非法作业，不支持运行!")
+        globals()[task_id] = BashOperator(
+            task_id=f'''{task_id}''',
+            depends_on_past=False,
+            bash_command=f''' ssh root@10.53.0.1 "echo /{task_file_path}/{task_file_name} ;" ''',
+            dag=dag
+        )
 
 
 # 设置复杂依赖关系
