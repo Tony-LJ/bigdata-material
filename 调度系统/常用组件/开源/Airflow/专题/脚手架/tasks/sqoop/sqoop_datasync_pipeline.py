@@ -229,15 +229,32 @@ def impala_sync_postgresql(url,
     else:
         logger.info("未知sqoop抽数据类型!")
 
-def execute_sqoop_command(sqoop_command,sqoop_type, parallelism):
+def execute_sqoop_command(sqoop_command, task_type, parallelism):
     """
     执行sqoop命令
     :param sqoop_command:
-    :param sqoop_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
+    :param task_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
     :param parallelism: 任务并行度
     :return:
     """
     logger.info("执行sqoop命令...!")
+    if task_type == "NORMAL":
+        logger.info("NORMAL抽数")
+        os.system(sqoop_command)
+    elif task_type == "ROWID":
+        logger.info("ROWID抽数")
+        os.system(sqoop_command)
+    elif task_type == "INCRE":
+        logger.info("INCRE抽数")
+        os.system(sqoop_command)
+    elif task_type == "COL":
+        logger.info("COL抽数")
+        os.system(sqoop_command)
+    elif task_type == "QUERY":
+        logger.info("QUERY抽数")
+        os.system(sqoop_command)
+    else:
+        logger.info("未知类型sqoop抽数,请检查!")
 
 
 json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
