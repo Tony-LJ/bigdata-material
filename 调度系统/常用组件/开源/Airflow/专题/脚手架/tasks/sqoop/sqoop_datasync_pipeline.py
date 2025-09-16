@@ -239,8 +239,6 @@ def execute_distribute_sqoop_command(jdbc_url,
         logger.info("未知类型sqoop抽数,请检查!")
 
 
-
-
 json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
 
 
