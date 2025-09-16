@@ -8,6 +8,8 @@ file_name : sqoop_datasync_pipeline.py
 import json
 import argparse
 import logging
+import os
+import sys
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
@@ -39,15 +41,33 @@ def oracle_sync_impala(url,
                        password,
                        source_table,
                        sink_table,
+                       sqoop_cate,
                        is_distributed, split_by):
     """
-     oracle同步impala
+    oracle同步impala
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info("oracle同步impala")
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+    else:
+        logger.info("未知sqoop抽数据类型!")
 
 def postgresql_sync_impala(url,
                            username,
