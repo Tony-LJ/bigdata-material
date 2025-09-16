@@ -47,8 +47,12 @@ shc: strip turing_shc_test_case.sh.x
 shc: chmod ug=rwx,o=rx turing_shc_test_case.sh.x
 说明：
 turing_shc_test_case.sh 是原始的未加密脚本
-turing_shc_test_case.sh.x 是二进制格式的加密shell脚本
-turing_shc_test_case.sh.x.c 是turing_test_case.sh 文件的C源代码
+turing_shc_test_case.sh.x 是二进制格式的加密shell脚本；赋予执行权限后，可直接执行
+turing_shc_test_case.sh.x.c 是turing_test_case.sh 文件的C源代码；基本上没啥用，可以直接删除
+-- 二进制文件-检查依赖性：如果二进制文件依赖于特定的库文件（例如，动态链接库 .so 文件），你需要确保这些依赖库已经安装在你的系统上。你可以使用 ldd 命令来检查依赖关系：
+ldd ./turing_shc_test_case.sh.x
+如果 ldd 命令显示缺少任何库，你可以使用 yum 或 dnf 来安装这些库。例如，如果输出显示缺少 libexample.so，你可以使用：sudo yum install libexample.so
+或者，如果库的名称是通用的（例如 libexample.so），你可能需要查找确切的包名，可以使用：yum provides */libexample.so*
 
 使用file命令查看文件的类型
 file turing_shc_test_case.sh.x
