@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
 console_handler = logging.StreamHandler()
@@ -18,6 +19,7 @@ console_handler.setLevel(logging.INFO)
 logger.addHandler(console_handler)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
+
 
 def oracle_sync_impala(jdbc_url,
                        username,
@@ -250,17 +252,15 @@ if __name__ == '__main__':
     # args = parser.parse_args()
     # print(args.gpus)
     # print(args.batch_size)
-
-    print(" >>> sqoop抽数开始!")
+    print(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sqoop抽数开始!")
     pipeline_type = 'oracle_sync_impala'
     jdbc_url = "jdbc:oracle:thin:@ebsdb-scan.kinwong.com:1531/prod"
-    driver = ""
     username = "hadoop"
     password = "vSWnGLcdd8ch"
     source_table = ""
     sqoop_type = ""
     sink_table = ""
-    sqoop_cate = ""
+    sqoop_param = ""
     is_distributed = 1
     split_by = ""
     parallelism = 5
@@ -287,4 +287,28 @@ if __name__ == '__main__':
     # age = data['age']
     # print(name)
 
-    print(" >>> sqoop抽数结束!")
+    print(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sqoop抽数结束!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
