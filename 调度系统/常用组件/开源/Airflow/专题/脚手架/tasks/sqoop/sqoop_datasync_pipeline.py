@@ -11,18 +11,23 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.INFO)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+logger.addHandler(console_handler)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
 
 json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
 
 def mysql_sync_impala(url,
-                      driver,
                       username,
                       password,
-                      is_distributed,split_by ):
+                      source_table,
+                      sink_table,
+                      is_distributed, split_by):
     """
      mysql同步impala
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -30,14 +35,14 @@ def mysql_sync_impala(url,
     logger.info('mysql同步impala')
 
 def oracle_sync_impala(url,
-                       driver,
                        username,
                        password,
-                       is_distributed,split_by):
+                       source_table,
+                       sink_table,
+                       is_distributed, split_by):
     """
      oracle同步impala
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -45,14 +50,14 @@ def oracle_sync_impala(url,
     logger.info("oracle同步impala")
 
 def postgresql_sync_impala(url,
-                           driver,
                            username,
                            password,
-                           is_distributed,split_by):
+                           source_table,
+                           sink_table,
+                           is_distributed, split_by):
     """
      postgresql同步impala
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -60,14 +65,14 @@ def postgresql_sync_impala(url,
     logger.info("postgresql同步impala")
 
 def impala_sync_mysql(url,
-                      driver,
                       username,
                       password,
-                      is_distributed,split_by):
+                      source_table,
+                      sink_table,
+                      is_distributed, split_by):
     """
      impala同步mysql
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -75,14 +80,14 @@ def impala_sync_mysql(url,
     logger.info("impala同步mysql")
 
 def impala_sync_oracle(url,
-                       driver,
                        username,
                        password,
-                       is_distributed,split_by):
+                       source_table,
+                       sink_table,
+                       is_distributed, split_by):
     """
      impala同步oracle
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -90,14 +95,14 @@ def impala_sync_oracle(url,
     logger.info("impala同步oracle")
 
 def impala_sync_postgresql(url,
-                           driver,
                            username,
                            password,
-                           is_distributed,split_by):
+                           source_table,
+                           sink_table,
+                           is_distributed, split_by):
     """
      impala同步postgresql
     :param url:
-    :param driver:
     :param username:
     :param password:
     :return:
@@ -115,22 +120,30 @@ if __name__ == '__main__':
     # print(args.batch_size)
 
     print(" >>> sqoop抽数开始!")
-    pipeline_type = 'mysql_sync_impala'
+    pipeline_type = 'oracle_sync_impala'
+    url = "jdbc:oracle:thin:@ebsdb-scan.kinwong.com:1531/prod"
+    driver = ""
+    username = "hadoop"
+    password = "vSWnGLcdd8ch"
+    source_table = ""
+    sink_table = ""
+    is_distributed = ""
+    split_by = ""
 
     if pipeline_type == 'mysql_sync_impala':
-        print("mysql同步impala")
+        mysql_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
     elif pipeline_type == 'oracle_sync_impala':
-        print("oracle同步impala")
+        oracle_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
     elif pipeline_type == 'postgresql_sync_impala':
-        print("postgresql同步impala")
+        postgresql_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
     elif pipeline_type == 'impala_sync_mysql':
-        print("impala同步mysql")
+        impala_sync_mysql(url,username,password,source_table,sink_table,is_distributed,split_by)
     elif pipeline_type == 'impala_sync_oracle':
-        print("impala同步oracle")
+        impala_sync_oracle(url,username,password,source_table,sink_table,is_distributed,split_by)
     elif pipeline_type == 'impala_sync_postgresql':
-        print("impala同步postgresql")
+        impala_sync_postgresql(url,username,password,source_table,sink_table,is_distributed,split_by)
     else:
-        print("未知类型数据同步!")
+        logger.info("未知类型数据同步,请检查!")
 
     data = json.loads(json_str)
 
