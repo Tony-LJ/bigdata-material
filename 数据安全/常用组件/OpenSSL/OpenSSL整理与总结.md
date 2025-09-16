@@ -48,29 +48,36 @@ OpenSSL 1.1.1t  7 Feb 2023
 ## 使用教程
 - [openssl enc命令加密文件]()
 ```.text
-1.加密文件
+1.加密文件（openssl_enc_encrypted_script.sh）
 ------------------------------------------------------------------------------------------------------------
 #!/bin/bash
-
+# #################################################
+# descr: openssl enc命令加密文件
+# author: Tony
+# date: 2025-09-20
+# #################################################
 # 设置变量
-input_file="example.txt"
-output_file="encrypted_example.txt"
+input_file="/opt/script/example.txt"
+output_file="/opt/script/encrypted_example.txt"
 password="Turing@123456789"
 cipher="aes-256-cbc"  # 加密算法
- 
 # 加密文件
 openssl enc -aes-256-cbc -salt -in "$input_file" -out "$output_file" -pass pass:"$password"
 ------------------------------------------------------------------------------------------------------------
+
 2.解密文件
 ------------------------------------------------------------------------------------------------------------
 #!/bin/bash
- 
+# #################################################
+# descr: openssl enc命令解密文件
+# author: Tony
+# date: 2025-09-20
+# #################################################
 # 设置变量
-encrypted_file="encrypted_example.txt"
-decrypted_file="decrypted_example.txt"
-password="your_password"
+encrypted_file="/opt/script/encrypted_example.txt"
+decrypted_file="/opt/script/decrypted_example.txt"
+password="Turing@123456789"
 cipher="aes-256-cbc"  # 加密算法
- 
 # 解密文件
 openssl enc -d -aes-256-cbc -in "$encrypted_file" -out "$decrypted_file" -pass pass:"$password"
 ------------------------------------------------------------------------------------------------------------
