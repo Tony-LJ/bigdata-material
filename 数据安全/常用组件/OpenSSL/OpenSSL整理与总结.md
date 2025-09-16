@@ -65,7 +65,7 @@ cipher="aes-256-cbc"  # 加密算法
 openssl enc -aes-256-cbc -salt -in "$input_file" -out "$output_file" -pass pass:"$password"
 ------------------------------------------------------------------------------------------------------------
 
-2.解密文件
+2.解密文件（openssl_enc_decrypted_script.sh）
 ------------------------------------------------------------------------------------------------------------
 #!/bin/bash
 # #################################################
@@ -84,7 +84,41 @@ openssl enc -d -aes-256-cbc -in "$encrypted_file" -out "$decrypted_file" -pass p
 ```
 - [openssl rsautl进行非对称加密]()
 ```.text
+生成RSA密钥对
+openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in private_key.pem -out public_key.pem
 
+1.加密文件（openssl_rsautl_encrypted_script.sh）
+------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+# #################################################
+# descr: openssl rsautl命令加密文件
+# author: Tony
+# date: 2025-09-20
+# #################################################
+# 设置变量
+input_file="/opt/script/example.txt"
+output_file="/opt/script/encrypted_example.rsa"
+public_key="public_key.pem" # 加密秘钥
+# 加密文件
+openssl rsautl -encrypt -pubin -inkey "$public_key" -in "$input_file" -out "$output_file"
+------------------------------------------------------------------------------------------------------------
+
+2.解密文件（openssl_rsautl_decrypted_script.sh）
+------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+# #################################################
+# descr: openssl rsautl命令解密文件
+# author: Tony
+# date: 2025-09-20
+# #################################################
+# 设置变量
+encrypted_file="/opt/script/encrypted_example.rsa"
+decrypted_file="/opt/script/decrypted_example.txt"
+private_key="private_key.pem" # 解密密钥
+# 解密文件
+openssl rsautl -decrypt -inkey "$private_key" -in "$encrypted_file" -out "$decrypted_file"
+------------------------------------------------------------------------------------------------------------
 ```
 
 ## openssl aes-256-cbc命令常用场景
