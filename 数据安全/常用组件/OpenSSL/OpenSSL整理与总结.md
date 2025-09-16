@@ -46,11 +46,39 @@ OpenSSL 1.1.1t  7 Feb 2023
 ```
 
 ## 使用教程
+- [openssl enc命令加密文件]()
+```.text
+1.加密文件
+------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+# 设置变量
+input_file="example.txt"
+output_file="encrypted_example.txt"
+password="Turing@123456789"
+cipher="aes-256-cbc"  # 加密算法
+ 
+# 加密文件
+openssl enc -aes-256-cbc -salt -in "$input_file" -out "$output_file" -pass pass:"$password"
+------------------------------------------------------------------------------------------------------------
+2.解密文件
+------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+ 
+# 设置变量
+encrypted_file="encrypted_example.txt"
+decrypted_file="decrypted_example.txt"
+password="your_password"
+cipher="aes-256-cbc"  # 加密算法
+ 
+# 解密文件
+openssl enc -d -aes-256-cbc -in "$encrypted_file" -out "$decrypted_file" -pass pass:"$password"
+------------------------------------------------------------------------------------------------------------
+```
+- [openssl rsautl进行非对称加密]()
 ```.text
 
 ```
-
-
 
 ## openssl aes-256-cbc命令常用场景
 - [加密/解密文件或数据]()
@@ -80,7 +108,7 @@ OpenSSL 1.1.1t  7 Feb 2023
 ## 参考资料
 - [对shell脚本敏感命令进行加密执行](https://blog.csdn.net/unbuntu_luo/article/details/146467541)
 - [如何在CentOS 7/RHEL 7上安装OpenSSL 1.1.x](https://blog.csdn.net/frenzytechai/article/details/131264516)
-
+- [CentOS7中升级OpenSSL详细教程](https://developer.aliyun.com/article/1611674)
 
 
 
