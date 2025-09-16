@@ -20,6 +20,8 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 console_handler.setFormatter(formatter)
 
 def oracle_sync_impala(url,
+                       port,
+                       db_name,
                        username,
                        password,
                        source_table,
@@ -29,6 +31,8 @@ def oracle_sync_impala(url,
     """
     oracle同步impala
     :param url:
+    :param port:
+    :param db_name:
     :param username:
     :param password:
     :param source_table:
@@ -40,46 +44,149 @@ def oracle_sync_impala(url,
     """
     logger.info("oracle同步impala")
     if is_distributed == 0:
-        sqoop_cmd = f"""
+        sqoop_command = f"""
         
         """
-        os.system(sqoop_cmd)
+        execute_sqoop_command(sqoop_type)
         logger.info("开始常规抽数")
     elif is_distributed == 1:
-        sqoop_cmd = f"""
+        sqoop_command = f"""
         
         """
-        os.system(sqoop_cmd)
+        os.system(sqoop_command)
         logger.info("开始分布式抽数")
     else:
         logger.info("未知sqoop抽数据类型!")
 
-def execute_sqoop_command(sqoop_command, task_type, parallelism):
+def execute_sqoop_command(url,
+                          port,
+                          db_name,
+                          username,
+                          source_table,
+                          sink_table,
+                          password,
+                          sqoop_type):
+    """
+    执行sqoop数据同步抽数命令
+    :param url:
+    :param port:
+    :param db_name:
+    :param username:
+    :param source_table:
+    :param sink_table:
+    :param password:
+    :param sqoop_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
+    :return:
+    """
+    logger.info("执行sqoop命令...!")
+    if sqoop_type == "NORMAL":
+        logger.info("NORMAL抽数")
+        sqoop_command = f"""
+        sqoop import \
+        --connect jdbc:oracle:thin:@{url}:{port}/{db_name} \
+        --username {username} \
+        --password {password} \
+        --table {source_table} \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {sink_table} \
+        --delete-target-dir \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --hive-overwrite \
+        --m 1
+        """
+        os.system(sqoop_command)
+    elif sqoop_type == "ROWID":
+        logger.info("ROWID抽数")
+        sqoop_command = f"""
+        
+        """
+        os.system(sqoop_command)
+    elif sqoop_type == "INCRE":
+        logger.info("INCRE抽数")
+        sqoop_command = f"""
+        
+        """
+        os.system(sqoop_command)
+    elif sqoop_type == "COL":
+        logger.info("COL抽数")
+        sqoop_command = f"""
+        
+        """
+        os.system(sqoop_command)
+    elif sqoop_type == "QUERY":
+        logger.info("QUERY抽数")
+        sqoop_command = f"""
+        
+        """
+        os.system(sqoop_command)
+    else:
+        logger.info("未知类型sqoop抽数,请检查!")
+
+def execute_distribute_sqoop_command(url,
+                                     username,
+                                     password,sqoop_type, parallelism):
     """
     执行sqoop命令
     :param sqoop_command:
-    :param task_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
+    :param sqoop_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
     :param parallelism: 任务并行度
     :return:
     """
     logger.info("执行sqoop命令...!")
-    if task_type == "NORMAL":
+    if sqoop_type == "NORMAL":
         logger.info("NORMAL抽数")
+        sqoop_command = f"""
+        sqoop import \
+        --connect jdbc:oracle:thin:@{db_host_o}:{db_port_o}/{db_base_o} \
+        --username {db_user_o} \
+        --password {db_pass_o} \
+        --table {table_in} \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {table_out} \
+        --delete-target-dir \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --hive-overwrite \
+        --m 1
+        """
         os.system(sqoop_command)
-    elif task_type == "ROWID":
+    elif sqoop_type == "ROWID":
         logger.info("ROWID抽数")
+        sqoop_command = f"""
+        
+        """
         os.system(sqoop_command)
-    elif task_type == "INCRE":
+    elif sqoop_type == "INCRE":
         logger.info("INCRE抽数")
+        sqoop_command = f"""
+        
+        """
         os.system(sqoop_command)
-    elif task_type == "COL":
+    elif sqoop_type == "COL":
         logger.info("COL抽数")
+        sqoop_command = f"""
+        
+        """
         os.system(sqoop_command)
-    elif task_type == "QUERY":
+    elif sqoop_type == "QUERY":
         logger.info("QUERY抽数")
+        sqoop_command = f"""
+        
+        """
         os.system(sqoop_command)
     else:
         logger.info("未知类型sqoop抽数,请检查!")
+
+
 
 
 json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
@@ -109,18 +216,18 @@ if __name__ == '__main__':
     parallelism = 5
 
     # 判断sqoop数据同步类型
-    if pipeline_type == 'mysql_sync_impala':
-        mysql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
-    elif pipeline_type == 'oracle_sync_impala':
+    if pipeline_type == 'oracle_sync_impala':
         oracle_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
-    elif pipeline_type == 'postgresql_sync_impala':
-        postgresql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
-    elif pipeline_type == 'impala_sync_mysql':
-        impala_sync_mysql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
-    elif pipeline_type == 'impala_sync_oracle':
-        impala_sync_oracle(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
-    elif pipeline_type == 'impala_sync_postgresql':
-        impala_sync_postgresql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
+    # elif pipeline_type == 'mysql_sync_impala':
+    #     mysql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
+    # elif pipeline_type == 'postgresql_sync_impala':
+    #     postgresql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
+    # elif pipeline_type == 'impala_sync_mysql':
+    #     impala_sync_mysql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
+    # elif pipeline_type == 'impala_sync_oracle':
+    #     impala_sync_oracle(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
+    # elif pipeline_type == 'impala_sync_postgresql':
+    #     impala_sync_postgresql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     else:
         logger.info("未知类型数据同步,请检查!")
 
