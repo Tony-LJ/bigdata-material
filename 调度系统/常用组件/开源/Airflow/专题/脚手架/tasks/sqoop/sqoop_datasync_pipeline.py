@@ -58,32 +58,28 @@ def oracle_sync_impala(url,
     else:
         logger.info("未知sqoop抽数据类型!")
 
-def execute_sqoop_command(url,
-                          port,
-                          db_name,
+def execute_sqoop_command(jdbc_url,
                           username,
                           source_table,
                           sink_table,
                           password,
-                          sqoop_type):
+                          sqoop_type,sqoop_param):
     """
     执行sqoop数据同步抽数命令
-    :param url:
-    :param port:
-    :param db_name:
+    :param jdbc_url:
     :param username:
     :param source_table:
     :param sink_table:
     :param password:
     :param sqoop_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
+    :param sqoop_param: sqoop参数列
     :return:
     """
     logger.info("执行sqoop命令...!")
     if sqoop_type == "NORMAL":
-        logger.info("NORMAL抽数")
         sqoop_command = f"""
         sqoop import \
-        --connect jdbc:oracle:thin:@{url}:{port}/{db_name} \
+        --connect {jdbc_url} \
         --username {username} \
         --password {password} \
         --table {source_table} \
@@ -99,37 +95,107 @@ def execute_sqoop_command(url,
         --hive-overwrite \
         --m 1
         """
+        logger.info("常规NORMAL抽数,SQOOP执行命令:{}".format(sqoop_command))
         os.system(sqoop_command)
     elif sqoop_type == "ROWID":
-        logger.info("ROWID抽数")
         sqoop_command = f"""
-        
+        sqoop import \
+        --connect {url} \
+        --username {username} \
+        --password {password} \
+        --table {source_table} \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {sink_table} \
+        --delete-target-dir \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --map-column-java {sqoop_param}  \
+        --map-column-hive {sqoop_param}   \
+        --hive-overwrite \
+        --m 1
         """
+        logger.info("特殊类型ROWID抽数(指定列抽数),SQOOP执行命令:{}".format(sqoop_command))
         os.system(sqoop_command)
     elif sqoop_type == "INCRE":
-        logger.info("INCRE抽数")
         sqoop_command = f"""
-        
+        sqoop import \
+        --connect {jdbc_url} \
+        --username {username} \
+        --password {password} \
+        --target-dir /sqoop/conditiontest/{sink_table} \
+        --delete-target-dir \
+        --query "select * from {source_table} where  {sqoop_param}   and \$CONDITIONS " \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {sink_table} \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --hive-overwrite \
+        --m 1
         """
+        logger.info("INCRE抽数(增量抽数),SQOOP执行命令:{}".format(sqoop_command))
         os.system(sqoop_command)
     elif sqoop_type == "COL":
-        logger.info("COL抽数")
         sqoop_command = f"""
-        
+        sqoop import \
+        --connect {url} \
+        --username {username} \
+        --password {password} \
+        --table {source_table} \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {sink_table} \
+        --delete-target-dir \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --map-column-java {sqoop_param}  \
+        --map-column-hive {sqoop_param}   \
+        --hive-overwrite \
+        --m 1
         """
+        logger.info("依据字段的COL抽数(指定列抽数),SQOOP执行命令:{}".format(sqoop_command))
         os.system(sqoop_command)
     elif sqoop_type == "QUERY":
-        logger.info("QUERY抽数")
         sqoop_command = f"""
-        
+        sqoop import \
+        --connect {jdbc_url} \
+        --username {username} \
+        --password {password} \
+        --target-dir /sqoop/conditiontest/{sink_table} \
+        --delete-target-dir \
+        --query "{sqoop_param}   and \$CONDITIONS " \
+        --hive-import \
+        --hive-database bi_ods \
+        --hive-table {sink_table} \
+        --hive-drop-import-delims \
+        --fields-terminated-by '\\001' \
+        --lines-terminated-by '\\n' \
+        --null-string '\\\\N' \
+        --null-non-string '\\\\N' \
+        --hive-overwrite \
+        --m 1
         """
+        logger.info("自定义sql抽数,SQOOP执行命令:{}".format(sqoop_command))
         os.system(sqoop_command)
     else:
         logger.info("未知类型sqoop抽数,请检查!")
 
-def execute_distribute_sqoop_command(url,
+def execute_distribute_sqoop_command(jdbc_url,
                                      username,
-                                     password,sqoop_type, parallelism):
+                                     source_table,
+                                     sink_table,
+                                     password,
+                                     sqoop_type,sqoop_param, parallelism):
     """
     执行sqoop命令
     :param sqoop_command:
@@ -141,22 +207,7 @@ def execute_distribute_sqoop_command(url,
     if sqoop_type == "NORMAL":
         logger.info("NORMAL抽数")
         sqoop_command = f"""
-        sqoop import \
-        --connect jdbc:oracle:thin:@{db_host_o}:{db_port_o}/{db_base_o} \
-        --username {db_user_o} \
-        --password {db_pass_o} \
-        --table {table_in} \
-        --hive-import \
-        --hive-database bi_ods \
-        --hive-table {table_out} \
-        --delete-target-dir \
-        --hive-drop-import-delims \
-        --fields-terminated-by '\\001' \
-        --lines-terminated-by '\\n' \
-        --null-string '\\\\N' \
-        --null-non-string '\\\\N' \
-        --hive-overwrite \
-        --m 1
+
         """
         os.system(sqoop_command)
     elif sqoop_type == "ROWID":
