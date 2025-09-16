@@ -63,7 +63,14 @@ sh /opt/script/turing_shc_test_case.sh.x.c
 设置Shell脚本的过期时间,并指定自定义的到期消息提示内容
 shc -e 24/09/2021 -m "The script has expired, please contact CoCo" -v -f /opt/script/turing_shc_test_case.sh
 ```
-
+- [二进制文件的执行]()
+  ```.text
+  1.使用绝对路径
+  2.将二进制文件所在的目录添加到 PATH 环境变量
+    如果你经常需要执行某个目录下的二进制文件，可以将该目录添加到你的 PATH 环境变量中。例如，如果你想添加 /usr/local/bin 到 PATH，你可以在你的 shell 配置文件中（如 .bashrc 或 .bash_profile）添加以下行：
+    export PATH=$PATH:/usr/local/bin
+    然后，运行 source ~/.bashrc 或重新登录你的会话，就可以直接通过文件名来执行二进制文件了。
+  ```
 - [shell脚本文件通过shc工具加密，生成静态链接可执行文件]()
 ```.text
 
