@@ -32,6 +32,11 @@ def mysql_sync_impala(url,
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info('mysql同步impala')
@@ -80,6 +85,11 @@ def postgresql_sync_impala(url,
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info("postgresql同步impala")
@@ -95,6 +105,11 @@ def impala_sync_mysql(url,
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info("impala同步mysql")
@@ -110,6 +125,11 @@ def impala_sync_oracle(url,
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info("impala同步oracle")
@@ -125,6 +145,11 @@ def impala_sync_postgresql(url,
     :param url:
     :param username:
     :param password:
+    :param source_table:
+    :param sink_table:
+    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param is_distributed:
+    :param split_by:
     :return:
     """
     logger.info("impala同步postgresql")
