@@ -1,7 +1,7 @@
 #!/bin/bash
 # #################################################
 # descr: 基于SHC加密SHELL脚本，设置加密文件的过期时间,并指定到期消息提示内容
-# shc -e 17/09/2021 -m "The script has expired, please contact CoCo" -v -f /opt/script/turing_test_case.sh
+# shc -e 17/09/2021 -m "The script has expired, please contact CoCo" -v -f /opt/script/turing_shc_test_case.sh
 # author: Tony
 # date: 2025-09-20
 # #################################################
