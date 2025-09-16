@@ -37,11 +37,11 @@ EOF
 重新加载shell环境：
 source /etc/profile.d/openssl.sh
 
-重新登录并验证 CentOS 7 / RHEL 7 上是否安装了 OpenSSL 1.1.1
-$ which openssl
+重新登录并验证CentOS 7/RHEL 7上是否安装了OpenSSL 1.1.1
+> 查看位置
+which openssl
 /usr/local/openssl/bin/openssl
- 
-$ openssl version
+> 查看版本openssl version
 OpenSSL 1.1.1t  7 Feb 2023
 ```
 
@@ -52,7 +52,7 @@ OpenSSL 1.1.1t  7 Feb 2023
 
 
 
-## openssl aes-256-cbc 命令通常用于以下场景
+## openssl aes-256-cbc命令常用场景
 - [加密/解密文件或数据]()
 ```.text
 用于保护敏感数据，如配置文件、数据库备份、通信内容等。
