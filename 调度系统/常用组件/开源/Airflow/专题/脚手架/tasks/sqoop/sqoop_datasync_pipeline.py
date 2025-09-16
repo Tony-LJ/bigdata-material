@@ -19,14 +19,13 @@ logger.addHandler(console_handler)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
 
-json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
-
 def mysql_sync_impala(url,
                       username,
                       password,
                       source_table,
                       sink_table,
-                      is_distributed, split_by):
+                      sqoop_type,
+                      is_distributed, split_by, parallelism):
     """
      mysql同步impala
     :param url:
@@ -34,20 +33,34 @@ def mysql_sync_impala(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
     """
     logger.info('mysql同步impala')
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
+    else:
+        logger.info("未知sqoop抽数据类型!")
 
 def oracle_sync_impala(url,
                        username,
                        password,
                        source_table,
                        sink_table,
-                       sqoop_cate,
-                       is_distributed, split_by):
+                       sqoop_type,
+                       is_distributed, split_by, parallelism):
     """
     oracle同步impala
     :param url:
@@ -55,7 +68,7 @@ def oracle_sync_impala(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
@@ -66,11 +79,13 @@ def oracle_sync_impala(url,
         
         """
         os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
     elif is_distributed == 1:
         sqoop_cmd = f"""
         
         """
         os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
     else:
         logger.info("未知sqoop抽数据类型!")
 
@@ -79,7 +94,8 @@ def postgresql_sync_impala(url,
                            password,
                            source_table,
                            sink_table,
-                           is_distributed, split_by):
+                           sqoop_type,
+                           is_distributed, split_by, parallelism):
     """
      postgresql同步impala
     :param url:
@@ -87,19 +103,34 @@ def postgresql_sync_impala(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
     """
     logger.info("postgresql同步impala")
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
+    else:
+        logger.info("未知sqoop抽数据类型!")
 
 def impala_sync_mysql(url,
                       username,
                       password,
                       source_table,
                       sink_table,
-                      is_distributed, split_by):
+                      sqoop_type,
+                      is_distributed, split_by, parallelism):
     """
      impala同步mysql
     :param url:
@@ -107,19 +138,34 @@ def impala_sync_mysql(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
     """
     logger.info("impala同步mysql")
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
+    else:
+        logger.info("未知sqoop抽数据类型!")
 
 def impala_sync_oracle(url,
                        username,
                        password,
                        source_table,
                        sink_table,
-                       is_distributed, split_by):
+                       sqoop_type,
+                       is_distributed, split_by, parallelism):
     """
      impala同步oracle
     :param url:
@@ -127,19 +173,34 @@ def impala_sync_oracle(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
     """
     logger.info("impala同步oracle")
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
+    else:
+        logger.info("未知sqoop抽数据类型!")
 
 def impala_sync_postgresql(url,
                            username,
                            password,
                            source_table,
                            sink_table,
-                           is_distributed, split_by):
+                           sqoop_type,
+                           is_distributed, split_by, parallelism):
     """
      impala同步postgresql
     :param url:
@@ -147,12 +208,39 @@ def impala_sync_postgresql(url,
     :param password:
     :param source_table:
     :param sink_table:
-    :param sqoop_cate: SRM、NORMAL、ROWID、INCRE、COL、QUERY、MysqlQuery
+    :param sqoop_type: SRM、NORMAL、ROWID、INCRE、COL、QUERY
     :param is_distributed:
     :param split_by:
     :return:
     """
     logger.info("impala同步postgresql")
+    if is_distributed == 0:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始常规抽数")
+    elif is_distributed == 1:
+        sqoop_cmd = f"""
+        
+        """
+        os.system(sqoop_cmd)
+        logger.info("开始分布式抽数")
+    else:
+        logger.info("未知sqoop抽数据类型!")
+
+def execute_sqoop_command(sqoop_command,sqoop_type, parallelism):
+    """
+    执行sqoop命令
+    :param sqoop_command:
+    :param sqoop_type: 同步类型:{SRM、NORMAL、ROWID、INCRE、COL、QUERY}
+    :param parallelism: 任务并行度
+    :return:
+    """
+    logger.info("执行sqoop命令...!")
+
+
+json_str = '{"name": "Alice", "age": 18, "gender": "female"}'
 
 
 if __name__ == '__main__':
@@ -171,30 +259,33 @@ if __name__ == '__main__':
     username = "hadoop"
     password = "vSWnGLcdd8ch"
     source_table = ""
+    sqoop_type = ""
     sink_table = ""
-    is_distributed = ""
+    sqoop_cate = ""
+    is_distributed = 1
     split_by = ""
+    parallelism = 5
 
+    # 判断sqoop数据同步类型
     if pipeline_type == 'mysql_sync_impala':
-        mysql_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
+        mysql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     elif pipeline_type == 'oracle_sync_impala':
-        oracle_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
+        oracle_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     elif pipeline_type == 'postgresql_sync_impala':
-        postgresql_sync_impala(url,username,password,source_table,sink_table,is_distributed,split_by)
+        postgresql_sync_impala(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     elif pipeline_type == 'impala_sync_mysql':
-        impala_sync_mysql(url,username,password,source_table,sink_table,is_distributed,split_by)
+        impala_sync_mysql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     elif pipeline_type == 'impala_sync_oracle':
-        impala_sync_oracle(url,username,password,source_table,sink_table,is_distributed,split_by)
+        impala_sync_oracle(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     elif pipeline_type == 'impala_sync_postgresql':
-        impala_sync_postgresql(url,username,password,source_table,sink_table,is_distributed,split_by)
+        impala_sync_postgresql(url,username,password,source_table,sink_table,sqoop_type,is_distributed,split_by,parallelism)
     else:
         logger.info("未知类型数据同步,请检查!")
 
-    data = json.loads(json_str)
-
-    # 获取姓名和年龄
-    name = data['name']
-    age = data['age']
-    print(name)
+    # data = json.loads(json_str)
+    # # 获取姓名和年龄
+    # name = data['name']
+    # age = data['age']
+    # print(name)
 
     print(" >>> sqoop抽数结束!")
