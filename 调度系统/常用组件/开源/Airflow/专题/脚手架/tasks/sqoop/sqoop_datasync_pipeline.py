@@ -255,16 +255,27 @@ if __name__ == '__main__':
     print(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sqoop抽数开始!")
     start_time = time.time()
     pipeline_type = 'oracle_sync_impala'
+    sqoop_type = "NORMAL"
     jdbc_url = "jdbc:oracle:thin:@ebsdb-scan.kinwong.com:1531/prod"
     username = "hadoop"
     password = "vSWnGLcdd8ch"
-    source_table = ""
-    sqoop_type = "NORMAL"
-    sink_table = ""
+    source_table = "CUX.CUX_PROC_VARY_ACCOUNT_B"
+    sink_table = "ODS_CUX_CUX_PROC_VARY_ACCOUNT_B"
     sqoop_param = ""
     is_distributed = 0
     split_by = ""
     parallelism = 5
+    logger.info("传入参数: pipeline_type:{}"
+                ",sqoop_type:{}"
+                ",jdbc_url:{}"
+                ",username:{}"
+                ",password:{}"
+                ",source_table:{}"
+                ",sink_table:{}"
+                ",sqoop_param:{}"
+                ",is_distributed:{}"
+                ",split_by:{}"
+                ",parallelism:{}".format(pipeline_type,sqoop_type,jdbc_url,username,password,source_table,sink_table,sqoop_param,is_distributed,split_by,parallelism))
 
     # 判断sqoop数据同步类型
     if pipeline_type == 'oracle_sync_impala':
