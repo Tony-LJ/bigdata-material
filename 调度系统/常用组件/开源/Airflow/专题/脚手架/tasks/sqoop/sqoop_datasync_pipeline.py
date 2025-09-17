@@ -63,7 +63,7 @@ def execute_sqoop_command(jdbc_url,
                           sink_table,
                           sqoop_type,sqoop_param):
     """
-    执行sqoop数据同步抽数命令
+    单并行度-执行sqoop数据同步抽数命令
     :param jdbc_url:
     :param username:
     :param source_table:
@@ -265,7 +265,7 @@ if __name__ == '__main__':
     is_distributed = 0
     split_by = ""
     parallelism = 5
-    logger.info("传入参数: pipeline_type:{}"
+    logger.info("SQOOP数据同步传入参数: pipeline_type:{}"
                 ",sqoop_type:{}"
                 ",jdbc_url:{}"
                 ",username:{}"

@@ -23,3 +23,8 @@ sqoop import \
 --split-by org_id \
 --m 5
 ```
+
+
+
+## 参考资料
+- [sqoop --split-by详解](https://blog.csdn.net/jsjsjs1789/article/details/70093104)
