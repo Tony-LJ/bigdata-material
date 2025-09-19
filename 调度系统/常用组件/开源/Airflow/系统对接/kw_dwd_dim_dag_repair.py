@@ -3,7 +3,7 @@
 # descr: airflow新集群kw_dwd_dim_dag异常情况巡检修复脚本
 # author: Tony
 # date: 2025-09-18
-# */20 * * * * sshpass -p 'EEEeee111' ssh root@10.53.0.75 python3 /srv/tmp/kw_dwd_dim_dag_repair.py
+# */20 * * * * sshpass -p 'EEEeee111' ssh root@10.53.0.75 python3 /srv/tmp/kw_dwd_dim_dag_repair.py >> /opt/project/kw_dwd_dim_dag_repair.log 2>&1
 # ###############################
 
 import json
@@ -169,9 +169,9 @@ def retry_failed_taskId_InDag(dag_id):
         struct_time = time.localtime()
         current_time = time.strftime("%Y-%m-%d %H:%M:%S", struct_time)
         print(">>>>>无异常任务,巡检时间:{}".format(current_time))
-        utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
-        msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务,巡检日期:" + current_time + " </font>\n "
-        send_wechat_work_message(utcWebhookUrl,msg)
+        # utcWebhookUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=34f51e63-9ab5-43fa-8621-377b7bf70064"
+        # msg = "**DAG巡检结果**: <font color='blue'> " + dag_id + "无异常任务,巡检日期:" + current_time + " </font>\n "
+        # send_wechat_work_message(utcWebhookUrl,msg)
 
 
 if __name__ == '__main__':
