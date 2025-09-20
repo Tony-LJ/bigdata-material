@@ -58,7 +58,9 @@ PythonOperator是最常用的Operator之一，允许执行任意的Python函数�
 
 
 
-
+### 参考资料
+- [Apache Airflow Operators大全：内置与自定义操作器实战指南](https://blog.csdn.net/gitblog_00202/article/details/150953003)
+- [Apache Airflow操作符大全：核心操作符深度解析](https://blog.csdn.net/gitblog_00556/article/details/150607037)
 
 
 
