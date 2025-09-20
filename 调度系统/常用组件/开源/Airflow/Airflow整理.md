@@ -51,7 +51,7 @@
 - [airflow官方文档](https://airflow.apache.org/docs/apache-airflow/stable/database-erd-ref.html)
 - [Airflow 入门案例教程](https://blog.csdn.net/helunqu2017/article/details/150018797)
 - [Airflow调度Spark](https://help.aliyun.com/zh/analyticdb/analyticdb-for-mysql/user-guide/use-airflow-to-perform-job-scheduling)
-
+- [任务调度系统之Airflow](https://geosmart.github.io/2020/07/28/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%B3%BB%E7%BB%9F%E4%B9%8BAirflow/)
 
 
 
