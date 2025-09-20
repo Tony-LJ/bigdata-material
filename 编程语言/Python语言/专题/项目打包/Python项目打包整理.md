@@ -39,6 +39,6 @@
 - [Python项目打包之钥:setup.py全方位指南](https://blog.csdn.net/2402_86492143/article/details/151183604)
 - [Python包分发终极指南：深入掌握setuptools打包技术](https://blog.csdn.net/weixin_63779518/article/details/148930592)
 - [Python的setuptools加密和打包分发项目](https://blog.csdn.net/weixin_43145427/article/details/123843952)
-
+- [python项目打包加密和跨平台运行](https://blog.csdn.net/weixin_44986037/article/details/140617431)
 
 
