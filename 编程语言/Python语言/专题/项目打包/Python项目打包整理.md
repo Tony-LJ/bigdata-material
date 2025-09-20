@@ -29,3 +29,8 @@
 
 ## 参考资料
 - [Python项目打包之钥:setup.py全方位指南](https://blog.csdn.net/2402_86492143/article/details/151183604)
+- [Python包分发终极指南：深入掌握setuptools打包技术](https://blog.csdn.net/weixin_63779518/article/details/148930592)
+
+
+
+
