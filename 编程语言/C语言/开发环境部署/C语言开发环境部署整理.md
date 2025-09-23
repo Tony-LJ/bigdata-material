@@ -12,8 +12,13 @@
 ![img](imgs/892356438576.png) </br>
 ![img](imgs/43546879896.png) </br>
 ```.text
-1.配置windows环境变量
+1.配置MinGW-W64 GCC windows环境变量,并验证
 ```
+![img](imgs/3845789687.png) </br>
+![img](imgs/35743488695465.png) </br>
+
+- [VSCode环境配置]()</br>
+![img](imgs/iqyrwietuoyiuopu.png) </br>
 
 
 
