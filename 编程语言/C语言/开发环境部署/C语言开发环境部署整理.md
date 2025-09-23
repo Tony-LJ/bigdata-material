@@ -8,10 +8,12 @@
 - [C编译器MinGW-W64 GCC安装]()
 ```.text
 1.下载:C编译器MinGW-W64 GCC,并解压安装
-2.
 ```
+![img](imgs/892356438576.png) </br>
 ![img](imgs/43546879896.png) </br>
-
+```.text
+1.配置windows环境变量
+```
 
 
 
