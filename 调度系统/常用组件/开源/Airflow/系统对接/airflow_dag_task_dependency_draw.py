@@ -178,7 +178,7 @@ if __name__ == '__main__':
     print("Mysql Airflow Dag TaskInstance依赖关系绘制")
     mysql_helper = MysqlUtils("mysql")
     mysql_helper.get_connection()
-    sql_str = """
+    sql_str = f"""
     select n.task_id, 
            n.task_file_name,
            e.dwonstream_task_id
@@ -212,3 +212,5 @@ if __name__ == '__main__':
     
     for index, row in df.iterrows():
         print(f"Index: {index}, task_id: {row['task_id']}, dwonstream_task_id: {row['dwonstream_task_id']}")
+
+
